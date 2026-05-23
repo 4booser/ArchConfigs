@@ -1,15 +1,29 @@
+@define-color bg rgba(12, 14, 20, 0.55);
+@define-color border rgba(255, 255, 255, 0.08);
+@define-color module_bg rgba(255, 255, 255, 0.06);
+@define-color module_hover rgba(255, 255, 255, 0.12);
+@define-color text #cdd6f4;
+@define-color muted #8f9bb3;
+@define-color white #ffffff;
+@define-color blue #89b4fa;
+@define-color red #f38ba8;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color purple #cba6f7;
+@define-color peach #fab387;
+
 * {
     border: none;
     border-radius: 0;
-    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "JetBrainsMono Nerd Font", "Noto Color Emoji", sans-serif;
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", "Font Awesome 6 Brands", "Noto Color Emoji", sans-serif;
     font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    background: rgba(12, 14, 20, 0.55);
-    color: #e6e6f0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: @bg;
+    color: @text;
+    border-bottom: 1px solid @border;
 }
 
 #custom-ws1,
@@ -20,7 +34,7 @@ window#waybar {
     min-width: 24px;
     padding: 0 9px;
     margin: 5px 2px;
-    color: #8f9bb3;
+    color: @muted;
     background: rgba(20, 22, 32, 0.65);
     border-radius: 12px;
     transition: all 0.25s ease;
@@ -32,7 +46,7 @@ window#waybar {
 #custom-ws4.active,
 #custom-ws5.active {
     min-width: 32px;
-    color: #ffffff;
+    color: @white;
     background: rgba(137, 180, 250, 0.35);
     padding: 0 14px;
 }
@@ -42,128 +56,107 @@ window#waybar {
 #custom-ws3:hover,
 #custom-ws4:hover,
 #custom-ws5:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.12);
+    color: @white;
+    background: @module_hover;
 }
 
-/* Заголовок активного окна */
 #window {
-    color: #cdd6f4;
+    color: @text;
     padding: 0 10px;
 }
 
-/* Общий стиль модулей */
 #clock,
 #cpu,
 #memory,
-#temperature,
 #network,
 #tray,
 #disk,
 #language,
-#cava,
 #mpris,
+#idle_inhibitor,
+#wireplumber,
 #custom-weather,
 #custom-power,
 #custom-gpu,
-#custom-cava {
+#custom-reload {
     padding: 0 12px;
     margin: 5px 3px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
+    background: @module_bg;
 }
 
-/* Цвета модулей */
 #clock {
-    color: #f9e2af;
+    color: @yellow;
 }
 
 #cpu {
-    color: #89b4fa;
+    color: @blue;
 }
 
 #memory {
-    color: #cba6f7;
-}
-
-#temperature {
-    color: #fab387;
+    color: @purple;
 }
 
 #tray {
-    color: #cdd6f4;
+    color: @text;
 }
 
 #custom-weather {
-    color: #89b4fa;
+    color: @blue;
 }
 
 #custom-gpu {
-    color: #f38ba8;
+    color: @red;
 }
 
 #custom-power {
-    color: #f38ba8;
+    color: @red;
     margin-right: 10px;
     font-size: 15px;
 }
 
 #custom-power:hover {
     background: rgba(243, 139, 168, 0.25);
-    color: #ffffff;
+    color: @white;
 }
 
 #disk {
-    color: #fab387;
+    color: @peach;
+}
+
+#network {
+    color: @green;
 }
 
 #language {
-    color: #cba6f7;
-}
-
-#cava {
-    color: #89b4fa;
-    font-family: "JetBrainsMono Nerd Font", monospace;
-    font-size: 14px;
+    color: @purple;
 }
 
 #mpris {
-    color: #89b4fa;
+    color: @blue;
 }
 
 #idle_inhibitor {
-    color: #f9e2af;
-    padding: 0 12px;
-    margin: 5px 3px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
+    color: @yellow;
 }
 
 #idle_inhibitor.activated {
-    color: #a6e3a1;
+    color: @green;
 }
 
 #wireplumber {
-    color: #a6e3a1;
-    padding: 0 12px;
-    margin: 5px 3px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
+    color: @green;
 }
 
 #wireplumber.muted {
-    color: #f38ba8;
+    color: @red;
 }
 
 #custom-reload {
-    color: #89b4fa;
-    padding: 0 12px;
-    margin: 5px 3px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
+    color: @blue;
 }
 
 #custom-reload:hover {
-    color: #ffffff;
+    color: @white;
     background: rgba(137, 180, 250, 0.25);
 }
