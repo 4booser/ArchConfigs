@@ -2,7 +2,7 @@
   "layer": "top",
   "position": "top",
   "height": 34,
-  "spacing": 8,
+  "spacing": 0,
 
   "modules-left": [
     "custom/ws1",
