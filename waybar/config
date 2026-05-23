@@ -20,58 +20,58 @@
   ],
 
   "modules-right": [
-  "wireplumber",
-  "custom/weather",
-  "custom/gpu",
-  "cpu",
-  "memory",
-  "tray",
-  "disk",
-  "network",
-  "idle_inhibitor",
-  "custom/reload",
-  "custom/power"
-],
+    "wireplumber",
+    "custom/weather",
+    "custom/gpu",
+    "cpu",
+    "memory",
+    "tray",
+    "disk",
+    "network",
+    "idle_inhibitor",
+    "custom/reload",
+    "custom/power"
+  ],
 
-"custom/ws1": {
-  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 1",
-  "return-type": "json",
-  "signal": 8,
-  "format": "{}",
-  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 1 })'; pkill -RTMIN+8 waybar"
-},
+  "custom/ws1": {
+    "exec": "$HOME/.config/waybar/scripts/ws.sh 1",
+    "return-type": "json",
+    "signal": 8,
+    "format": "{}",
+    "on-click": "hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = \"1\" }))'; pkill -RTMIN+8 waybar"
+  },
 
-"custom/ws2": {
-  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 2",
-  "return-type": "json",
-  "signal": 8,
-  "format": "{}",
-  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 2 })'; pkill -RTMIN+8 waybar"
-},
+  "custom/ws2": {
+    "exec": "$HOME/.config/waybar/scripts/ws.sh 2",
+    "return-type": "json",
+    "signal": 8,
+    "format": "{}",
+    "on-click": "hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = \"2\" }))'; pkill -RTMIN+8 waybar"
+  },
 
-"custom/ws3": {
-  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 3",
-  "return-type": "json",
-  "signal": 8,
-  "format": "{}",
-  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })'; pkill -RTMIN+8 waybar"
-},
+  "custom/ws3": {
+    "exec": "$HOME/.config/waybar/scripts/ws.sh 3",
+    "return-type": "json",
+    "signal": 8,
+    "format": "{}",
+    "on-click": "hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = \"3\" }))'; pkill -RTMIN+8 waybar"
+  },
 
-"custom/ws4": {
-  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 4",
-  "return-type": "json",
-  "signal": 8,
-  "format": "{}",
-  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 4 })'; pkill -RTMIN+8 waybar"
-},
+  "custom/ws4": {
+    "exec": "$HOME/.config/waybar/scripts/ws.sh 4",
+    "return-type": "json",
+    "signal": 8,
+    "format": "{}",
+    "on-click": "hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = \"4\" }))'; pkill -RTMIN+8 waybar"
+  },
 
-"custom/ws5": {
-  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 5",
-  "return-type": "json",
-  "signal": 8,
-  "format": "{}",
-  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 5 })'; pkill -RTMIN+8 waybar"
-},
+  "custom/ws5": {
+    "exec": "$HOME/.config/waybar/scripts/ws.sh 5",
+    "return-type": "json",
+    "signal": 8,
+    "format": "{}",
+    "on-click": "hyprctl eval 'hl.dispatch(hl.dsp.focus({ workspace = \"5\" }))'; pkill -RTMIN+8 waybar"
+  },
 
   "hyprland/window": {
     "format": "{}",
@@ -79,8 +79,8 @@
   },
 
   "hyprland/language": {
-  "format": "  {}"
-},
+    "format": "  {}"
+  },
 
   "clock": {
     "format": "  {:%H:%M}",
@@ -103,14 +103,14 @@
   },
 
   "custom/gpu": {
-    "exec": "/home/abooser/.config/waybar/scripts/gpu.sh",
+    "exec": "$HOME/.config/waybar/scripts/gpu.sh",
     "format": "{}",
     "interval": 2,
     "tooltip": false
   },
 
   "custom/weather": {
-    "exec": "/home/abooser/.config/waybar/scripts/weather.sh",
+    "exec": "$HOME/.config/waybar/scripts/weather.sh",
     "format": "{}",
     "interval": 900,
     "return-type": "json",
@@ -120,69 +120,67 @@
   "custom/power": {
     "format": "",
     "tooltip": false,
-    "on-click": "/home/abooser/.config/hypr/scripts/powermenu.sh"
+    "on-click": "$HOME/.config/hypr/scripts/powermenu.sh"
   },
 
-"disk": {
-  "path": "/",
-  "format": "󰋊  {percentage_used}%"
-},
-
-"network": {
-  "interface": "enp2s0",
-  "format-ethernet": "󰈀  {ifname} {ipaddr}",
-  "format-wifi": "  {essid} {signalStrength}%",
-  "format-disconnected": "󰖪 offline",
-  "tooltip-format": "{ifname}\nIP: {ipaddr}\nGW: {gwaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}",
-  "interval": 1,
-  "on-click": "kitty --hold -e nmtui"
-},
-
-"wlr/taskbar": {
-  "format": "{icon}",
-  "icon-size": 18,
-  "on-click": "activate",
-  "on-click-middle": "close"
-},
-
-"mpris": {
-  "format": "  {player_icon} {title}",
-  "format-paused": "  {title}",
-  "max-length": 35,
-  "player-icons": {
-    "default": "▶",
-    "firefox": "",
-    "chromium": "",
-    "spotify": ""
+  "disk": {
+    "path": "/",
+    "format": "󰋊  {percentage_used}%"
   },
-  "on-click": "playerctl play-pause",
-  "on-scroll-up": "playerctl next",
-  "on-scroll-down": "playerctl previous"
-},
 
-"idle_inhibitor": {
-  "format": "{icon}",
-  "format-icons": {
-    "activated": "",
-    "deactivated": ""
+  "network": {
+    "format-ethernet": "󰈀  {ifname} {ipaddr}",
+    "format-wifi": "  {essid} {signalStrength}%",
+    "format-disconnected": "󰖪 offline",
+    "tooltip-format": "{ifname}\nIP: {ipaddr}\nGW: {gwaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}",
+    "interval": 1,
+    "on-click": "kitty --hold -e nmtui"
   },
-  "tooltip": false
-},
 
-"wireplumber": {
-  "format": "  {volume}%",
-  "format-muted": "󰝟 muted",
-  "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-  "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
-  "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
-  "max-volume": 150,
-  "tooltip": false
-},
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "on-click": "activate",
+    "on-click-middle": "close"
+  },
 
-"custom/reload": {
-  "format": "󰑓",
-  "tooltip": false,
-  "on-click": "pkill waybar; waybar &"
-}
+  "mpris": {
+    "format": "  {player_icon} {title}",
+    "format-paused": "  {title}",
+    "max-length": 35,
+    "player-icons": {
+      "default": "▶",
+      "firefox": "",
+      "chromium": "",
+      "spotify": ""
+    },
+    "on-click": "playerctl play-pause",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous"
+  },
 
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": ""
+    },
+    "tooltip": false
+  },
+
+  "wireplumber": {
+    "format": "  {volume}%",
+    "format-muted": "󰝟 muted",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+    "max-volume": 150,
+    "tooltip": false
+  },
+
+  "custom/reload": {
+    "format": "󰑓",
+    "tooltip": false,
+    "on-click": "sh -c 'pkill waybar; setsid waybar >/dev/null 2>&1 &'"
+  }
 }
