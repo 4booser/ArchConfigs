@@ -15,7 +15,7 @@ lua_move_window() {
     local address="$2"
     local code
 
-    code="$ (
+    code="$(
         jq -Rn \
             --arg workspace "$workspace" \
             --arg window "address:$address" \
