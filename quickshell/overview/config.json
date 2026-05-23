@@ -1,0 +1,39 @@
+{
+  "overview": {
+    "rows": 1,
+    "columns": 5,
+    "scale": 0.18,
+    "enable": true,
+    "hideEmptyRows": false,
+    "closeOnFocusLoss": true,
+    "useWorkspaceMap": false,
+    "workspaceMap": [0, 10],
+    "orderRightLeft": false,
+    "orderBottomUp": false,
+    "previewsEnabled": true,
+    "previewMode": "live",
+    "includeInactiveMonitorPreviews": true,
+    "previewRecaptureDelayMs": 45,
+    "showSpecialWorkspaces": true,
+    "specialWorkspaces": ["minimized", "showdesktop"],
+    "specialWorkspaceColumns": 5,
+    "emptyWorkspaceWallpaper": "",
+    "specialEmptyWorkspaceWallpaper": "",
+    "effects": {
+      "enableBackdrop": true,
+      "backdropOpacity": 0.34,
+      "panelOpacity": 0.90,
+      "workspaceOpacity": 0.82,
+      "emptyWorkspaceWallpaperOverlayOpacity": 0.18,
+      "windowOverlayOpacity": 0.22,
+      "enableBlur": true,
+      "glassMode": true,
+      "glassTintStrength": 0.36,
+      "glassBorderOpacity": 0.72,
+      "glassShineOpacity": 0.14
+    },
+    "workspaceSpacing": 8,
+    "backgroundPadding": 14,
+    "workspaceNumberBaseSize": 230
+  }
+}
