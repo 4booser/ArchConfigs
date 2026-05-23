@@ -24,6 +24,10 @@ kill_dashboard() {
     dashboard_pids | xargs -r kill -9 2>/dev/null || true
 }
 
+call_ipc() {
+    timeout 2s qs -p "$qs_dir" ipc call dashboard toggle >>"$log_file" 2>&1
+}
+
 if [[ "${1:-}" == "--kill" ]]; then
     kill_dashboard
     rm -f "$lock_file"
@@ -31,9 +35,19 @@ if [[ "${1:-}" == "--kill" ]]; then
     exit 0
 fi
 
+if [[ "${1:-}" == "--status" ]]; then
+    dashboard_pids || true
+    exit 0
+fi
+
+if [[ "${1:-}" == "--restart" ]]; then
+    kill_dashboard
+    rm -f "$lock_file"
+fi
+
 exec 9>"$lock_file"
 if ! flock -n 9; then
-    log "launcher already running; ignoring duplicate request"
+    log "launcher already running; removing stale lock and ignoring duplicate request"
     exit 0
 fi
 
@@ -60,8 +74,8 @@ if (( ${#pids[@]} == 0 )); then
     log "starting qs dashboard from $qs_dir"
     qs -p "$qs_dir" >>"$log_file" 2>&1 &
 
-    for _ in 1 2 3 4 5 6 7 8 9 10; do
-        sleep 0.1
+    for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+        sleep 0.12
         mapfile -t pids < <(dashboard_pids)
         (( ${#pids[@]} > 0 )) && break
     done
@@ -73,8 +87,15 @@ if (( ${#pids[@]} == 0 )); then
 fi
 
 log "calling dashboard toggle on pid(s): ${pids[*]}"
-if ! timeout 2s qs -p "$qs_dir" ipc call dashboard toggle >>"$log_file" 2>&1; then
-    log "ERROR: dashboard IPC failed or timed out; killing dashboard instance"
+if ! call_ipc; then
+    log "ERROR: dashboard IPC failed; restarting dashboard once"
     kill_dashboard
-    exit 1
+    sleep 0.2
+    qs -p "$qs_dir" >>"$log_file" 2>&1 &
+    sleep 0.7
+    if ! call_ipc; then
+        log "ERROR: dashboard IPC failed after restart; killing dashboard instance"
+        kill_dashboard
+        exit 1
+    fi
 fi
