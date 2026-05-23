@@ -1,0 +1,95 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "spacing": 8,
+
+  "modules-left": [
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+
+  "modules-center": [
+    "clock"
+  ],
+
+  "modules-right": [
+    "custom/gpu",
+    "cpu",
+    "memory",
+    "temperature",
+    "network",
+    "battery",
+    "tray"
+  ],
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "urgent": "",
+      "active": "",
+      "default": ""
+    },
+    "persistent-workspaces": {
+      "*": 5
+    }
+  },
+
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 45
+  },
+
+  "clock": {
+    "format": "  {:%H:%M}",
+    "format-alt": "  {:%d.%m.%Y  %H:%M:%S}",
+    "tooltip-format": "<big>{:%A, %d %B %Y}</big>"
+  },
+
+  "cpu": {
+    "format": "  {usage}%",
+    "tooltip": true,
+    "interval": 2
+  },
+
+  "memory": {
+    "format": "  {}%",
+    "interval": 2
+  },
+
+  "temperature": {
+    "format": "  {temperatureC}°C",
+    "critical-threshold": 80
+  },
+
+  "network": {
+    "format-wifi": "  {essid} {signalStrength}%",
+    "format-ethernet": "󰈀  {ipaddr}",
+    "format-disconnected": "󰖪  no net",
+    "tooltip-format": "{ifname}: {ipaddr}",
+    "interval": 3
+  },
+
+  "battery": {
+    "format": "{icon}  {capacity}%",
+    "format-charging": "󰂄  {capacity}%",
+    "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 10
+  },
+
+  "custom/gpu": {
+    "exec": "~/.config/waybar/scripts/gpu.sh",
+    "format": "{}",
+    "interval": 2,
+    "tooltip": false
+  }
+}

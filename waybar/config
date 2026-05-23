@@ -1,0 +1,188 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "spacing": 8,
+
+  "modules-left": [
+    "custom/ws1",
+    "custom/ws2",
+    "custom/ws3",
+    "custom/ws4",
+    "custom/ws5",
+    "hyprland/language",
+    "hyprland/window"
+  ],
+
+  "modules-center": [
+    "clock",
+    "mpris"
+  ],
+
+  "modules-right": [
+  "wireplumber",
+  "custom/weather",
+  "custom/gpu",
+  "cpu",
+  "memory",
+  "tray",
+  "disk",
+  "network",
+  "idle_inhibitor",
+  "custom/reload",
+  "custom/power"
+],
+
+"custom/ws1": {
+  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 1",
+  "return-type": "json",
+  "signal": 8,
+  "format": "{}",
+  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 1 })'; pkill -RTMIN+8 waybar"
+},
+
+"custom/ws2": {
+  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 2",
+  "return-type": "json",
+  "signal": 8,
+  "format": "{}",
+  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 2 })'; pkill -RTMIN+8 waybar"
+},
+
+"custom/ws3": {
+  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 3",
+  "return-type": "json",
+  "signal": 8,
+  "format": "{}",
+  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 3 })'; pkill -RTMIN+8 waybar"
+},
+
+"custom/ws4": {
+  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 4",
+  "return-type": "json",
+  "signal": 8,
+  "format": "{}",
+  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 4 })'; pkill -RTMIN+8 waybar"
+},
+
+"custom/ws5": {
+  "exec": "/home/abooser/.config/waybar/scripts/ws.sh 5",
+  "return-type": "json",
+  "signal": 8,
+  "format": "{}",
+  "on-click": "hyprctl dispatch 'hl.dsp.focus({ workspace = 5 })'; pkill -RTMIN+8 waybar"
+},
+
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 45
+  },
+
+  "hyprland/language": {
+  "format": "  {}"
+},
+
+  "clock": {
+    "format": "  {:%H:%M}",
+    "format-alt": "  {:%d.%m.%Y  %H:%M:%S}"
+  },
+
+  "cpu": {
+    "format": "  {usage}%",
+    "interval": 2
+  },
+
+  "memory": {
+    "format": "  {}%",
+    "interval": 2
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 10
+  },
+
+  "custom/gpu": {
+    "exec": "/home/abooser/.config/waybar/scripts/gpu.sh",
+    "format": "{}",
+    "interval": 2,
+    "tooltip": false
+  },
+
+  "custom/weather": {
+    "exec": "/home/abooser/.config/waybar/scripts/weather.sh",
+    "format": "{}",
+    "interval": 900,
+    "return-type": "json",
+    "tooltip": false
+  },
+
+  "custom/power": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "/home/abooser/.config/hypr/scripts/powermenu.sh"
+  },
+
+"disk": {
+  "path": "/",
+  "format": "󰋊  {percentage_used}%"
+},
+
+"network": {
+  "interface": "enp2s0",
+  "format-ethernet": "󰈀  {ifname} {ipaddr}",
+  "format-wifi": "  {essid} {signalStrength}%",
+  "format-disconnected": "󰖪 offline",
+  "tooltip-format": "{ifname}\nIP: {ipaddr}\nGW: {gwaddr}\nUp: {bandwidthUpBits}\nDown: {bandwidthDownBits}",
+  "interval": 1,
+  "on-click": "kitty --hold -e nmtui"
+},
+
+"wlr/taskbar": {
+  "format": "{icon}",
+  "icon-size": 18,
+  "on-click": "activate",
+  "on-click-middle": "close"
+},
+
+"mpris": {
+  "format": "  {player_icon} {title}",
+  "format-paused": "  {title}",
+  "max-length": 35,
+  "player-icons": {
+    "default": "▶",
+    "firefox": "",
+    "chromium": "",
+    "spotify": ""
+  },
+  "on-click": "playerctl play-pause",
+  "on-scroll-up": "playerctl next",
+  "on-scroll-down": "playerctl previous"
+},
+
+"idle_inhibitor": {
+  "format": "{icon}",
+  "format-icons": {
+    "activated": "",
+    "deactivated": ""
+  },
+  "tooltip": false
+},
+
+"wireplumber": {
+  "format": "  {volume}%",
+  "format-muted": "󰝟 muted",
+  "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+  "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+  "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+  "max-volume": 150,
+  "tooltip": false
+},
+
+"custom/reload": {
+  "format": "󰑓",
+  "tooltip": false,
+  "on-click": "pkill waybar; waybar &"
+}
+
+}

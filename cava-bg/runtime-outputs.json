@@ -1,0 +1,13 @@
+[
+  {
+    "name": "HDMI-A-1",
+    "index": 0,
+    "width": 1920,
+    "height": 1080,
+    "position": [
+      0,
+      0
+    ],
+    "configured": true
+  }
+]
