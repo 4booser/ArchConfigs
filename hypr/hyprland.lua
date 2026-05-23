@@ -232,7 +232,7 @@ hl.window_rule({
 
     float = true,
     size = "900 500",
-    move = "center",
+    center = true,
     pin = true,
     opacity = "0.90 0.90",
 })
