@@ -21,21 +21,20 @@ ShellRoot {
     property var sys: payload.system || ({})
     property var weather: payload.weather || ({})
     property var current: weather.current || ({})
-
-    property string clockText: Qt.formatDateTime(new Date(), "hh:mm")
-    property string dateText: Qt.formatDateTime(new Date(), "dddd, dd MMMM")
-    property string pendingPowerAction: ""
     property var cpuHistory: []
     property var gpuHistory: []
     property var ramHistory: []
     property var netHistory: []
+    property string clockText: Qt.formatDateTime(new Date(), "hh:mm")
+    property string dateText: Qt.formatDateTime(new Date(), "dddd, dd MMMM")
+    property string pendingPowerAction: ""
 
     readonly property color panelBg: "#e00b2228"
-    readonly property color sidebarBg: "#6b10242b"
+    readonly property color sidebarBg: "#6810242b"
     readonly property color cardBg: "#9d0e2a31"
-    readonly property color cardBg2: "#ad123139"
+    readonly property color cardBg2: "#b0123139"
     readonly property color borderSoft: "#30ffffff"
-    readonly property color borderActive: "#754aa3ff"
+    readonly property color borderActive: "#704aa3ff"
     readonly property color textMain: "#eff8f6"
     readonly property color textSoft: "#aebfc3"
     readonly property color textMuted: "#6c888e"
@@ -81,6 +80,11 @@ ShellRoot {
         return ["grid", "music", "activity", "cloud", "power", "apps", "network", "settings"][index]
     }
 
+    function daily(name) {
+        if (!weather || !weather.daily || !weather.daily[name]) return []
+        return weather.daily[name]
+    }
+
     function weatherIcon(code) {
         code = n(code, 3)
         if (code === 0) return "☀"
@@ -105,11 +109,6 @@ ShellRoot {
         if (code >= 80 && code <= 82) return "Rain showers"
         if (code >= 95) return "Thunderstorm"
         return "Cloudy"
-    }
-
-    function daily(name) {
-        if (!weather || !weather.daily || !weather.daily[name]) return []
-        return weather.daily[name]
     }
 
     function setAppVolume(value) {
@@ -182,8 +181,8 @@ ShellRoot {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            clockText = Qt.formatDateTime(new Date(), "hh:mm")
-            dateText = Qt.formatDateTime(new Date(), "dddd, dd MMMM")
+            root.clockText = Qt.formatDateTime(new Date(), "hh:mm")
+            root.dateText = Qt.formatDateTime(new Date(), "dddd, dd MMMM")
         }
     }
 
@@ -356,103 +355,97 @@ ShellRoot {
         }
     }
 
-    component PerformancePage: ColumnLayout {
-        spacing: 8
+    component PerformancePage: Item {
+        id: perf
+        property int gap: 8
+        property int topH: 122
+        property int bottomY: topH + gap
+        property int leftW: 322
+        property int ringW: Math.floor((leftW - gap) / 2)
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 128
-            spacing: 8
-
-            GraphCard {
-                title: "CPU — " + root.s(root.sys.cpuName, "CPU")
-                value: root.n(root.sys.cpu, 0)
-                temp: root.n(root.sys.cpuTemp, 0)
-                points: root.cpuHistory
-                accentColor: root.blue
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 0
-            }
-
-            GraphCard {
-                title: "GPU — " + root.s(root.sys.gpuName, "GPU")
-                value: root.n(root.sys.gpu, 0)
-                temp: root.n(root.sys.gpuTemp, 0)
-                points: root.gpuHistory
-                accentColor: root.cyan
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 0
-            }
+        GraphCard {
+            x: 0
+            y: 0
+            width: Math.max(0, (perf.width - perf.gap) / 2)
+            height: perf.topH
+            title: "CPU — " + root.s(root.sys.cpuName, "CPU")
+            value: root.n(root.sys.cpu, 0)
+            temp: root.n(root.sys.cpuTemp, 0)
+            points: root.cpuHistory
+            accentColor: root.blue
         }
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 8
+        GraphCard {
+            x: Math.max(0, (perf.width + perf.gap) / 2)
+            y: 0
+            width: Math.max(0, (perf.width - perf.gap) / 2)
+            height: perf.topH
+            title: "GPU — " + root.s(root.sys.gpuName, "GPU")
+            value: root.n(root.sys.gpu, 0)
+            temp: root.n(root.sys.gpuTemp, 0)
+            points: root.gpuHistory
+            accentColor: root.cyan
+        }
 
-            RowLayout {
-                Layout.preferredWidth: 320
-                Layout.fillHeight: true
-                spacing: 8
+        RingCard {
+            x: 0
+            y: perf.bottomY
+            width: perf.ringW
+            height: Math.max(0, perf.height - perf.bottomY)
+            title: "Memory"
+            value: root.n(root.sys.ram, 0)
+            sub: root.s(root.sys.ramUsed, "0") + " / " + root.s(root.sys.ramTotal, "0") + " GiB"
+            accentColor: root.purple
+        }
 
-                RingCard {
-                    title: "Memory"
-                    value: root.n(root.sys.ram, 0)
-                    sub: root.s(root.sys.ramUsed, "0") + " / " + root.s(root.sys.ramTotal, "0") + " GiB"
-                    accentColor: root.purple
+        RingCard {
+            x: perf.ringW + perf.gap
+            y: perf.bottomY
+            width: perf.ringW
+            height: Math.max(0, perf.height - perf.bottomY)
+            title: "Storage"
+            value: root.n(root.sys.disk, 0)
+            sub: root.s(root.sys.diskUsed, "0") + " / " + root.s(root.sys.diskTotal, "0")
+            accentColor: root.cyan
+        }
+
+        Card {
+            x: perf.leftW + perf.gap
+            y: perf.bottomY
+            width: Math.max(0, perf.width - perf.leftW - perf.gap)
+            height: Math.max(0, perf.height - perf.bottomY)
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+                spacing: 6
+
+                Text {
+                    text: "Network — " + root.s(root.sys.netInterface, "--")
+                    color: root.textMain
+                    font.pixelSize: 14
+                    font.weight: Font.Black
+                    elide: Text.ElideRight
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
                 }
 
-                RingCard {
-                    title: "Storage"
-                    value: root.n(root.sys.disk, 0)
-                    sub: root.s(root.sys.diskUsed, "0") + " / " + root.s(root.sys.diskTotal, "0")
-                    accentColor: root.cyan
+                SparkGraph {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: 58
+                    Layout.fillHeight: false
+                    points: root.netHistory
+                    strokeColor: root.pink
                 }
-            }
 
-            Card {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumWidth: 260
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 6
-
-                    Text {
-                        text: "Network — " + root.s(root.sys.netInterface, "--")
-                        color: root.textMain
-                        font.pixelSize: 14
-                        font.weight: Font.Black
-                        elide: Text.ElideRight
-                        Layout.fillWidth: true
-                    }
-
-                    SparkGraph {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 62
-                        Layout.fillHeight: false
-                        points: root.netHistory
-                        strokeColor: root.pink
-                    }
-
-                    GridLayout {
-                        Layout.fillWidth: true
-                        columns: 2
-                        rowSpacing: 4
-                        columnSpacing: 10
-                        LabelValue { label: "Download"; value: root.n(root.sys.netDown, 0) + " KiB/s" }
-                        LabelValue { label: "Upload"; value: root.n(root.sys.netUp, 0) + " KiB/s" }
-                        LabelValue { label: "IP"; value: root.s(root.sys.ip, "--") }
-                        LabelValue { label: "Total"; value: "↓ " + root.n(root.sys.netRxTotalMb, 0) + "MB · ↑ " + root.n(root.sys.netTxTotalMb, 0) + "MB" }
-                    }
+                GridLayout {
+                    Layout.fillWidth: true
+                    columns: 2
+                    rowSpacing: 3
+                    columnSpacing: 10
+                    LabelValue { label: "Download"; value: root.n(root.sys.netDown, 0) + " KiB/s" }
+                    LabelValue { label: "Upload"; value: root.n(root.sys.netUp, 0) + " KiB/s" }
+                    LabelValue { label: "IP"; value: root.s(root.sys.ip, "--") }
+                    LabelValue { label: "Total"; value: "↓ " + root.n(root.sys.netRxTotalMb, 0) + "MB · ↑ " + root.n(root.sys.netTxTotalMb, 0) + "MB" }
                 }
             }
         }
@@ -655,7 +648,7 @@ ShellRoot {
             SparkGraph {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.preferredHeight: 70
+                Layout.preferredHeight: 58
                 points: graphCard.points
                 strokeColor: graphCard.accentColor
             }
@@ -669,20 +662,15 @@ ShellRoot {
         property string sub: ""
         property color accentColor: root.purple
 
-        RowLayout {
+        ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 10
-            spacing: 8
+            anchors.margins: 9
+            spacing: 5
 
-            RingMeter { value: ringCard.value; meterColor: ringCard.accentColor; Layout.preferredWidth: 64; Layout.preferredHeight: 64 }
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 2
-                Text { text: ringCard.title; color: root.textMain; font.pixelSize: 12; font.weight: Font.Black; elide: Text.ElideRight; Layout.fillWidth: true }
-                Text { text: Math.round(ringCard.value) + "%"; color: ringCard.accentColor; font.pixelSize: 15; font.weight: Font.Black }
-                Text { text: ringCard.sub; color: root.textMuted; font.pixelSize: 9; elide: Text.ElideRight; Layout.fillWidth: true }
-            }
+            Text { text: ringCard.title; color: root.textMain; font.pixelSize: 12; font.weight: Font.Black; elide: Text.ElideRight; Layout.fillWidth: true }
+            RingMeter { value: ringCard.value; meterColor: ringCard.accentColor; Layout.alignment: Qt.AlignHCenter; Layout.preferredWidth: 62; Layout.preferredHeight: 62 }
+            Text { text: Math.round(ringCard.value) + "%"; color: ringCard.accentColor; font.pixelSize: 14; font.weight: Font.Black; Layout.alignment: Qt.AlignHCenter }
+            Text { text: ringCard.sub; color: root.textMuted; font.pixelSize: 9; elide: Text.ElideRight; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter }
         }
     }
 
@@ -695,15 +683,14 @@ ShellRoot {
             const ctx = getContext("2d")
             ctx.reset()
             const w = width, h = height
-            const cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 - 7
-            ctx.lineWidth = 8
+            const cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 - 6
+            ctx.lineWidth = 7
             ctx.strokeStyle = "#24323a"
             ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke()
             ctx.strokeStyle = meterColor
             ctx.lineCap = "round"
             ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * Math.max(0, Math.min(100, value)) / 100); ctx.stroke()
         }
-        Text { anchors.centerIn: parent; text: Math.round(parent.value) + "%"; color: root.textMain; font.pixelSize: 15; font.weight: Font.Black }
     }
 
     component SparkGraph: Canvas {
@@ -727,7 +714,7 @@ ShellRoot {
             }
             if (!points || points.length < 2) return
             ctx.strokeStyle = strokeColor
-            ctx.lineWidth = 2.4
+            ctx.lineWidth = 2.2
             ctx.lineJoin = "round"
             ctx.lineCap = "round"
             ctx.beginPath()
@@ -854,8 +841,6 @@ ShellRoot {
     }
 
     component Card: Rectangle {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         radius: 20
         color: root.cardBg
         border.color: root.borderSoft
