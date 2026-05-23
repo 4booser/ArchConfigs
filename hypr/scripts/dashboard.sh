@@ -3,7 +3,6 @@ set -u
 
 qs_dir="$HOME/.config/quickshell/dashboard"
 log_file="/tmp/qs-dashboard.log"
-lock_file="/tmp/qs-dashboard.lock"
 
 log() {
     echo "$(date '+%F %T') $*" >>"$log_file" 2>/dev/null || true
@@ -25,12 +24,18 @@ kill_dashboard() {
 }
 
 call_ipc() {
-    timeout 2s qs -p "$qs_dir" ipc call dashboard toggle >>"$log_file" 2>&1
+    timeout 1.5s qs -p "$qs_dir" ipc call dashboard toggle >>"$log_file" 2>&1
+}
+
+start_dashboard() {
+    : >"$log_file"
+    log "starting qs dashboard from $qs_dir"
+    qs -p "$qs_dir" >>"$log_file" 2>&1 &
+    sleep 0.55
 }
 
 if [[ "${1:-}" == "--kill" ]]; then
     kill_dashboard
-    rm -f "$lock_file"
     log "killed dashboard by explicit --kill"
     exit 0
 fi
@@ -42,12 +47,8 @@ fi
 
 if [[ "${1:-}" == "--restart" ]]; then
     kill_dashboard
-    rm -f "$lock_file"
-fi
-
-exec 9>"$lock_file"
-if ! flock -n 9; then
-    log "launcher already running; removing stale lock and ignoring duplicate request"
+    start_dashboard
+    call_ipc || true
     exit 0
 fi
 
@@ -64,38 +65,27 @@ fi
 mapfile -t pids < <(dashboard_pids)
 
 if (( ${#pids[@]} > 1 )); then
-    log "WARNING: multiple dashboard instances detected: ${pids[*]}; killing all"
+    log "multiple dashboard instances: ${pids[*]}; restarting cleanly"
     kill_dashboard
     pids=()
 fi
 
 if (( ${#pids[@]} == 0 )); then
-    : >"$log_file"
-    log "starting qs dashboard from $qs_dir"
-    qs -p "$qs_dir" >>"$log_file" 2>&1 &
-
-    for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-        sleep 0.12
-        mapfile -t pids < <(dashboard_pids)
-        (( ${#pids[@]} > 0 )) && break
-    done
+    start_dashboard
 fi
 
-if (( ${#pids[@]} == 0 )); then
-    log "ERROR: qs dashboard did not start"
-    exit 1
+log "toggle request"
+if call_ipc; then
+    exit 0
 fi
 
-log "calling dashboard toggle on pid(s): ${pids[*]}"
-if ! call_ipc; then
-    log "ERROR: dashboard IPC failed; restarting dashboard once"
-    kill_dashboard
-    sleep 0.2
-    qs -p "$qs_dir" >>"$log_file" 2>&1 &
-    sleep 0.7
-    if ! call_ipc; then
-        log "ERROR: dashboard IPC failed after restart; killing dashboard instance"
-        kill_dashboard
-        exit 1
-    fi
+log "IPC failed; restarting once"
+kill_dashboard
+start_dashboard
+if call_ipc; then
+    exit 0
 fi
+
+log "ERROR: IPC failed after restart"
+kill_dashboard
+exit 1
