@@ -25,7 +25,7 @@ lua_move_window() {
     local status
 
     code="$(
-        jq -Rn \
+        jq -Rrn \
             --arg workspace "$workspace" \
             --arg window "address:$address" \
             '"hl.dispatch(hl.dsp.window.move({ workspace = " + ($workspace | @json) + ", follow = false, window = " + ($window | @json) + " }))"'
