@@ -35,11 +35,12 @@ window#waybar {
     padding: 0 7px;
     margin: 6px 0;
     color: @muted;
-    background: rgba(20, 22, 32, 0.78);
-    border-left: 1px solid rgba(255, 255, 255, 0.05);
-    transition-property: background-color, color, min-width, padding;
-    transition-duration: 160ms;
-    transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: rgba(20, 22, 32, 0.82);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 -2px transparent;
+    transition-property: background, color, box-shadow;
+    transition-duration: 220ms;
+    transition-timing-function: ease-out;
 }
 
 #custom-ws1 {
@@ -49,7 +50,7 @@ window#waybar {
 }
 
 #custom-ws5 {
-    margin-right: 4px;
+    margin-right: 8px;
     border-radius: 0 10px 10px 0;
 }
 
@@ -58,10 +59,9 @@ window#waybar {
 #custom-ws3.active,
 #custom-ws4.active,
 #custom-ws5.active {
-    min-width: 24px;
     color: @white;
-    background: rgba(137, 180, 250, 0.42);
-    padding: 0 10px;
+    background: linear-gradient(135deg, rgba(137, 180, 250, 0.52), rgba(203, 166, 247, 0.34));
+    box-shadow: inset 0 -2px @blue;
 }
 
 #custom-ws1:hover,
@@ -70,7 +70,8 @@ window#waybar {
 #custom-ws4:hover,
 #custom-ws5:hover {
     color: @white;
-    background: rgba(137, 180, 250, 0.22);
+    background: rgba(137, 180, 250, 0.25);
+    box-shadow: inset 0 -2px rgba(137, 180, 250, 0.55);
 }
 
 #window {
