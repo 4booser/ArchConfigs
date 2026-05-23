@@ -148,7 +148,7 @@ end
 
 -- Горячие клавиши
 hl.bind("SUPER + Q", hl.dsp.exec_cmd(terminal))
-hl.bind("SUPER + T", hl.dsp.exec_cmd("kitty --class quake-terminal"))
+hl.bind("SUPER + T", hl.dsp.exec_cmd(hypr .. "/scripts/control-center.sh"))
 hl.bind("SUPER + R", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + E", hl.dsp.exec_cmd(filemanager))
 hl.bind("SUPER + X", hl.dsp.window.move({ workspace = "special:minimized", follow = false }))
@@ -221,20 +221,6 @@ hl.window_rule({
     opacity = "0.70 0.70",
     border_size = 0,
     no_shadow = true,
-})
-
-hl.window_rule({
-    name = "quake-terminal",
-
-    match = {
-        class = "quake-terminal",
-    },
-
-    float = true,
-    size = "900 500",
-    center = true,
-    pin = true,
-    opacity = "0.90 0.90",
 })
 
 hl.monitor({
