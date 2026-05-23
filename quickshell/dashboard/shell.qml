@@ -9,17 +9,72 @@ ShellRoot {
     id: root
 
     property bool opened: false
+    property int activeTab: 0
     property string homeDir: Quickshell.env("HOME") || "/home/abooser"
     property string userName: Quickshell.env("USER") || "abooser"
+    property string assetDir: homeDir + "/.config/quickshell/dashboard/assets"
+    property string bongoCatPath: "file://" + assetDir + "/bongo-cat.gif"
     property var payload: ({})
     property var media: payload.media || ({})
     property var sys: payload.system || ({})
     property var weather: payload.weather || ({})
     property var current: weather.current || ({})
+    property string clockText: Qt.formatDateTime(new Date(), "hh:mm")
+    property string dateText: Qt.formatDateTime(new Date(), "dddd, dd MMMM")
+    property bool dataBusy: dataProcess.running
 
-    function numberValue(value, fallback) {
+    readonly property color bg: "#ee0f141d"
+    readonly property color cardBg: "#e918202b"
+    readonly property color cardBg2: "#d9151b25"
+    readonly property color borderSoft: "#22ffffff"
+    readonly property color accent: "#8fd3ff"
+    readonly property color accent2: "#ff9fd7"
+    readonly property color textMain: "#ffffff"
+    readonly property color textMuted: "#9ca8b8"
+
+    function n(value, fallback) {
+        if (value === undefined || value === null || value === "" || isNaN(value)) return fallback
+        return Number(value)
+    }
+
+    function s(value, fallback) {
         if (value === undefined || value === null || value === "") return fallback
-        return value
+        return String(value)
+    }
+
+    function weatherIcon(code) {
+        code = root.n(code, 3)
+        if (code === 0) return "☀"
+        if (code === 1 || code === 2) return ""
+        if (code === 3) return "☁"
+        if (code >= 45 && code <= 48) return ""
+        if (code >= 51 && code <= 67) return "☂"
+        if (code >= 71 && code <= 77) return "❄"
+        if (code >= 80 && code <= 82) return "☔"
+        if (code >= 95) return "⚡"
+        return "☁"
+    }
+
+    function weatherText(code) {
+        code = root.n(code, 3)
+        if (code === 0) return "Clear"
+        if (code === 1 || code === 2) return "Partly cloudy"
+        if (code === 3) return "Overcast"
+        if (code >= 45 && code <= 48) return "Fog"
+        if (code >= 51 && code <= 67) return "Drizzle"
+        if (code >= 71 && code <= 77) return "Snow"
+        if (code >= 80 && code <= 82) return "Rain showers"
+        if (code >= 95) return "Thunderstorm"
+        return "Cloudy"
+    }
+
+    function daily(name) {
+        if (!root.weather || !root.weather.daily || !root.weather.daily[name]) return []
+        return root.weather.daily[name]
+    }
+
+    function tabLabel(index) {
+        return ["Home", "Media", "System", "Weather"][index]
     }
 
     function toggle(): void {
@@ -45,6 +100,7 @@ ShellRoot {
         function toggle(): void { root.toggle() }
         function open(): void { root.open() }
         function close(): void { root.close() }
+        function refresh(): void { root.refreshData() }
     }
 
     Process {
@@ -64,6 +120,17 @@ ShellRoot {
     }
 
     Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            root.clockText = Qt.formatDateTime(new Date(), "hh:mm")
+            root.dateText = Qt.formatDateTime(new Date(), "dddd, dd MMMM")
+        }
+    }
+
+    Timer {
         interval: 10000
         running: root.opened
         repeat: true
@@ -78,30 +145,37 @@ ShellRoot {
         aboveWindows: true
         focusable: false
         exclusionMode: ExclusionMode.Ignore
-        implicitWidth: 980
-        implicitHeight: 560
+        implicitWidth: 1040
+        implicitHeight: 620
 
         WlrLayershell.layer: WlrLayer.Top
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
         anchors {
             top: true
+            right: true
         }
 
         margins {
-            top: 34
+            top: 42
+            right: 18
         }
 
         Rectangle {
             id: panel
             anchors.fill: parent
-            anchors.margins: 0
-            radius: 28
-            color: "#ee111821"
+            radius: 30
+            color: root.bg
             border.color: "#334fd1ff"
             border.width: 1
             clip: true
             antialiasing: true
+
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#f0131b26" }
+                GradientStop { position: 0.55; color: "#ee0d111a" }
+                GradientStop { position: 1.0; color: "#f0161220" }
+            }
 
             ColumnLayout {
                 anchors.fill: parent
@@ -110,159 +184,335 @@ ShellRoot {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 42
-                    spacing: 12
+                    Layout.preferredHeight: 70
+                    spacing: 14
+
+                    Rectangle {
+                        Layout.preferredWidth: 70
+                        Layout.preferredHeight: 70
+                        radius: 22
+                        color: "#f7f7f7"
+                        clip: true
+                        border.color: "#20ffffff"
+                        AnimatedImage {
+                            id: bongo
+                            anchors.fill: parent
+                            source: root.bongoCatPath
+                            fillMode: Image.PreserveAspectCrop
+                            playing: root.opened
+                            cache: false
+                        }
+                        Text {
+                            anchors.centerIn: parent
+                            visible: bongo.status === AnimatedImage.Error
+                            text: "ฅ"
+                            color: "#111111"
+                            font.pixelSize: 36
+                            font.weight: Font.Black
+                        }
+                    }
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: 0
+                        spacing: 3
                         Text {
                             text: "Dashboard"
-                            color: "#ffffff"
+                            color: root.textMain
                             font.family: "Inter"
-                            font.pixelSize: 24
+                            font.pixelSize: 28
                             font.weight: Font.Black
                         }
                         Text {
-                            text: "Quickshell safe panel · no fullscreen overlay"
-                            color: "#9ba6b2"
+                            text: root.dateText + " · Quickshell production panel"
+                            color: root.textMuted
                             font.family: "Inter"
                             font.pixelSize: 12
                         }
                     }
 
-                    Button {
-                        text: "Refresh"
-                        onClicked: root.refreshData()
+                    Rectangle {
+                        Layout.preferredWidth: 110
+                        Layout.preferredHeight: 50
+                        radius: 18
+                        color: "#261f2a36"
+                        border.color: root.borderSoft
+                        ColumnLayout {
+                            anchors.centerIn: parent
+                            spacing: 0
+                            Text { text: root.clockText; color: root.textMain; font.pixelSize: 22; font.weight: Font.Black; Layout.alignment: Qt.AlignHCenter }
+                            Text { text: root.dataBusy ? "updating" : "live"; color: root.dataBusy ? root.accent2 : root.textMuted; font.pixelSize: 10; Layout.alignment: Qt.AlignHCenter }
+                        }
                     }
 
-                    Button {
-                        text: "Close"
-                        onClicked: root.close()
-                    }
+                    IconButton { label: "↻"; tip: "Refresh"; onClicked: root.refreshData() }
+                    IconButton { label: "×"; tip: "Close"; danger: true; onClicked: root.close() }
                 }
 
-                GridLayout {
+                RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    columns: 3
-                    rowSpacing: 12
-                    columnSpacing: 12
-
-                    InfoCard {
-                        title: "Weather · Kyiv"
-                        main: Math.round(root.numberValue(root.current.temperature_2m, 0)) + "°C"
-                        sub: "humidity " + root.numberValue(root.current.relative_humidity_2m, 0) + "% · wind " + Math.round(root.numberValue(root.current.wind_speed_10m, 0)) + " km/h"
-                    }
-
-                    InfoCard {
-                        title: "Media"
-                        main: root.media.title || "No active track"
-                        sub: root.media.artist || root.media.player || "playerctl"
-                    }
-
-                    InfoCard {
-                        title: "Session"
-                        main: root.userName
-                        sub: "Arch · Hyprland · Quickshell"
-                    }
-
-                    InfoCard {
-                        title: "CPU"
-                        main: root.numberValue(root.sys.cpu, 0) + "%"
-                        sub: root.numberValue(root.sys.cpuTemp, 0) + "°C"
-                    }
-
-                    InfoCard {
-                        title: "Memory"
-                        main: root.numberValue(root.sys.ram, 0) + "%"
-                        sub: root.numberValue(root.sys.ramUsed, "0") + "/" + root.numberValue(root.sys.ramTotal, "0") + " GiB"
-                    }
-
-                    InfoCard {
-                        title: "Disk"
-                        main: root.numberValue(root.sys.disk, 0) + "%"
-                        sub: root.numberValue(root.sys.diskUsed, "0") + "/" + root.numberValue(root.sys.diskTotal, "0")
-                    }
-
-                    InfoCard {
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        title: "Network"
-                        main: "↓ " + root.numberValue(root.sys.netDown, 0) + " KiB/s · ↑ " + root.numberValue(root.sys.netUp, 0) + " KiB/s"
-                        sub: root.sys.ip || "no IPv4"
-                    }
+                    spacing: 14
 
                     Rectangle {
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: 160
                         Layout.fillHeight: true
-                        radius: 22
-                        color: "#dd151d28"
-                        border.color: "#22ffffff"
+                        radius: 24
+                        color: "#90141a24"
+                        border.color: root.borderSoft
+
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 16
-                            spacing: 10
-                            Text { text: "Actions"; color: "#86d7ff"; font.pixelSize: 13; font.weight: Font.Bold }
-                            Button { Layout.fillWidth: true; text: "Lock"; onClicked: Quickshell.execDetached(["hyprlock"]) }
-                            Button { Layout.fillWidth: true; text: "Play / Pause"; onClicked: Quickshell.execDetached(["playerctl", "play-pause"]) }
-                            Button { Layout.fillWidth: true; text: "Kill Dashboard"; onClicked: Quickshell.execDetached(["bash", root.homeDir + "/.config/hypr/scripts/dashboard.sh", "--kill"]) }
+                            anchors.margins: 12
+                            spacing: 8
+
+                            Repeater {
+                                model: 4
+                                delegate: NavButton {
+                                    label: root.tabLabel(index)
+                                    active: root.activeTab === index
+                                    onClicked: root.activeTab = index
+                                }
+                            }
+
+                            Item { Layout.fillHeight: true }
+
+                            Text {
+                                Layout.fillWidth: true
+                                text: "SUPER+M toggles this panel. Closed state creates no fullscreen overlay."
+                                color: root.textMuted
+                                font.pixelSize: 10
+                                wrapMode: Text.WordWrap
+                            }
                         }
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        HomePage { anchors.fill: parent; visible: root.activeTab === 0 }
+                        MediaPage { anchors.fill: parent; visible: root.activeTab === 1 }
+                        SystemPage { anchors.fill: parent; visible: root.activeTab === 2 }
+                        WeatherPage { anchors.fill: parent; visible: root.activeTab === 3 }
                     }
                 }
             }
         }
     }
 
-    component InfoCard: Rectangle {
-        property string title: ""
-        property string main: "--"
-        property string sub: ""
+    component HomePage: GridLayout {
+        columns: 3
+        rowSpacing: 12
+        columnSpacing: 12
 
+        BigWeatherCard { Layout.columnSpan: 1; Layout.fillWidth: true; Layout.fillHeight: true }
+        BigMediaCard { Layout.columnSpan: 2; Layout.fillWidth: true; Layout.fillHeight: true }
+
+        MetricCard { title: "CPU"; value: root.n(root.sys.cpu, 0) + "%"; sub: root.n(root.sys.cpuTemp, 0) + "°C"; percent: root.n(root.sys.cpu, 0) }
+        MetricCard { title: "RAM"; value: root.n(root.sys.ram, 0) + "%"; sub: root.s(root.sys.ramUsed, "0") + "/" + root.s(root.sys.ramTotal, "0") + " GiB"; percent: root.n(root.sys.ram, 0) }
+        MetricCard { title: "Disk"; value: root.n(root.sys.disk, 0) + "%"; sub: root.s(root.sys.diskUsed, "0") + "/" + root.s(root.sys.diskTotal, "0"); percent: root.n(root.sys.disk, 0) }
+
+        Card {
+            Layout.columnSpan: 3
+            Layout.fillWidth: true
+            Layout.preferredHeight: 95
+            RowLayout { anchors.fill: parent; anchors.margins: 16; spacing: 12
+                ActionButton { label: "Lock"; command: ["hyprlock"]; Layout.fillWidth: true }
+                ActionButton { label: "Play / Pause"; command: ["playerctl", "play-pause"]; Layout.fillWidth: true }
+                ActionButton { label: "Previous"; command: ["playerctl", "previous"]; Layout.fillWidth: true }
+                ActionButton { label: "Next"; command: ["playerctl", "next"]; Layout.fillWidth: true }
+            }
+        }
+    }
+
+    component MediaPage: RowLayout {
+        spacing: 12
+
+        Card {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            RowLayout { anchors.fill: parent; anchors.margins: 22; spacing: 24
+                Rectangle {
+                    Layout.preferredWidth: 250
+                    Layout.preferredHeight: 250
+                    radius: 30
+                    color: "#f7f7f7"
+                    border.color: root.borderSoft
+                    clip: true
+                    AnimatedImage {
+                        anchors.fill: parent
+                        source: root.bongoCatPath
+                        fillMode: Image.PreserveAspectCrop
+                        playing: root.opened && root.activeTab === 1
+                        cache: false
+                    }
+                }
+                ColumnLayout { Layout.fillWidth: true; Layout.fillHeight: true; spacing: 16
+                    Text { text: root.media.title || "No active track"; color: root.textMain; font.pixelSize: 30; font.weight: Font.Black; elide: Text.ElideRight; maximumLineCount: 2; Layout.fillWidth: true }
+                    Text { text: root.media.artist || root.media.album || root.media.player || "playerctl"; color: root.textMuted; font.pixelSize: 14; elide: Text.ElideRight; Layout.fillWidth: true }
+                    RowLayout { spacing: 12
+                        ActionButton { label: "⏮"; command: ["playerctl", "previous"]; Layout.preferredWidth: 74; Layout.preferredHeight: 58 }
+                        ActionButton { label: root.media.status === "Playing" ? "⏸" : "▶"; command: ["playerctl", "play-pause"]; Layout.preferredWidth: 86; Layout.preferredHeight: 68; highlight: true }
+                        ActionButton { label: "⏭"; command: ["playerctl", "next"]; Layout.preferredWidth: 74; Layout.preferredHeight: 58 }
+                    }
+                    Text { text: "System volume · " + root.n(root.media.volume, 100) + "%"; color: root.textMuted; font.pixelSize: 12 }
+                    Slider { Layout.fillWidth: true; from: 0; to: 150; value: root.n(root.media.volume, 100); onMoved: Quickshell.execDetached(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", Math.round(value) + "%"]) }
+                    Item { Layout.fillHeight: true }
+                    Text { text: "EQ integration is not wired yet. Recommended backend: EasyEffects preset switching over CLI."; color: "#728092"; font.pixelSize: 11; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                }
+            }
+        }
+    }
+
+    component SystemPage: GridLayout {
+        columns: 3
+        rowSpacing: 12
+        columnSpacing: 12
+
+        MetricCard { title: "CPU"; value: root.n(root.sys.cpu, 0) + "%"; sub: root.n(root.sys.cpuTemp, 0) + "°C"; percent: root.n(root.sys.cpu, 0) }
+        MetricCard { title: "GPU"; value: root.n(root.sys.gpu, 0) + "%"; sub: root.n(root.sys.gpuTemp, 0) + "°C"; percent: root.n(root.sys.gpu, 0) }
+        MetricCard { title: "Memory"; value: root.n(root.sys.ram, 0) + "%"; sub: root.s(root.sys.ramUsed, "0") + "/" + root.s(root.sys.ramTotal, "0") + " GiB"; percent: root.n(root.sys.ram, 0) }
+        MetricCard { title: "Storage"; value: root.n(root.sys.disk, 0) + "%"; sub: root.s(root.sys.diskUsed, "0") + "/" + root.s(root.sys.diskTotal, "0"); percent: root.n(root.sys.disk, 0) }
+        MetricCard { title: "Network"; value: "↓ " + root.n(root.sys.netDown, 0); sub: "↑ " + root.n(root.sys.netUp, 0) + " KiB/s"; percent: root.n(root.sys.netGraph, 0) }
+        MetricCard { title: "IP"; value: root.sys.ip || "--"; sub: "IPv4 active interface"; percent: 100 }
+
+        Card {
+            Layout.columnSpan: 3
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            ColumnLayout { anchors.fill: parent; anchors.margins: 16; spacing: 12
+                Text { text: "Runtime safety"; color: root.accent; font.pixelSize: 14; font.weight: Font.Bold }
+                Text { text: "No fullscreen overlay, no keyboard focus, no background mouse catcher. Data polling is bounded and runs only while the panel is open."; color: root.textMuted; font.pixelSize: 13; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                ActionButton { label: "Stop dashboard process"; command: ["bash", root.homeDir + "/.config/hypr/scripts/dashboard.sh", "--kill"]; Layout.preferredWidth: 230 }
+            }
+        }
+    }
+
+    component WeatherPage: ColumnLayout {
+        spacing: 12
+
+        BigWeatherCard { Layout.fillWidth: true; Layout.preferredHeight: 170 }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 10
+            Repeater {
+                model: Math.min(7, root.daily("time").length)
+                delegate: WeatherDayCard { dayIndex: index; Layout.fillWidth: true; Layout.fillHeight: true }
+            }
+        }
+    }
+
+    component BigWeatherCard: Card {
+        RowLayout { anchors.fill: parent; anchors.margins: 20; spacing: 16
+            Text { text: root.weatherIcon(root.current.weather_code); color: root.accent; font.pixelSize: 72; Layout.alignment: Qt.AlignVCenter }
+            ColumnLayout { Layout.fillWidth: true; spacing: 4
+                Text { text: "Kyiv"; color: root.textMain; font.pixelSize: 16; font.weight: Font.Bold }
+                Text { text: Math.round(root.n(root.current.temperature_2m, 0)) + "°C"; color: root.textMain; font.pixelSize: 44; font.weight: Font.Black }
+                Text { text: root.weatherText(root.current.weather_code); color: root.textMuted; font.pixelSize: 13 }
+                Text { text: "humidity " + root.n(root.current.relative_humidity_2m, 0) + "% · wind " + Math.round(root.n(root.current.wind_speed_10m, 0)) + " km/h"; color: root.textMuted; font.pixelSize: 12; elide: Text.ElideRight; Layout.fillWidth: true }
+            }
+        }
+    }
+
+    component BigMediaCard: Card {
+        RowLayout { anchors.fill: parent; anchors.margins: 20; spacing: 16
+            Rectangle {
+                Layout.preferredWidth: 118
+                Layout.preferredHeight: 118
+                radius: 24
+                color: "#f7f7f7"
+                clip: true
+                AnimatedImage { anchors.fill: parent; source: root.bongoCatPath; fillMode: Image.PreserveAspectCrop; playing: root.opened; cache: false }
+            }
+            ColumnLayout { Layout.fillWidth: true; spacing: 8
+                Text { text: root.media.title || "No active track"; color: root.textMain; font.pixelSize: 23; font.weight: Font.Black; maximumLineCount: 1; elide: Text.ElideRight; Layout.fillWidth: true }
+                Text { text: root.media.artist || root.media.player || "playerctl"; color: root.textMuted; font.pixelSize: 13; maximumLineCount: 1; elide: Text.ElideRight; Layout.fillWidth: true }
+                RowLayout { spacing: 10
+                    ActionButton { label: "⏮"; command: ["playerctl", "previous"]; Layout.preferredWidth: 56 }
+                    ActionButton { label: root.media.status === "Playing" ? "⏸" : "▶"; command: ["playerctl", "play-pause"]; highlight: true; Layout.preferredWidth: 66 }
+                    ActionButton { label: "⏭"; command: ["playerctl", "next"]; Layout.preferredWidth: 56 }
+                }
+            }
+        }
+    }
+
+    component WeatherDayCard: Card {
+        property int dayIndex: 0
+        ColumnLayout { anchors.fill: parent; anchors.margins: 12; spacing: 8
+            Text { text: dayIndex === 0 ? "Today" : Qt.formatDateTime(new Date(root.daily("time")[dayIndex]), "ddd"); color: root.textMain; font.pixelSize: 13; font.weight: Font.Black; Layout.alignment: Qt.AlignHCenter }
+            Text { text: root.weatherIcon(root.daily("weather_code")[dayIndex]); color: root.accent; font.pixelSize: 30; Layout.alignment: Qt.AlignHCenter }
+            Text { text: Math.round(root.n(root.daily("temperature_2m_min")[dayIndex], 0)) + "° / " + Math.round(root.n(root.daily("temperature_2m_max")[dayIndex], 0)) + "°"; color: root.textMain; font.pixelSize: 14; font.weight: Font.Bold; Layout.alignment: Qt.AlignHCenter }
+            Text { text: "☂ " + Math.round(root.n(root.daily("relative_humidity_2m_mean")[dayIndex], 0)) + "%"; color: root.textMuted; font.pixelSize: 11; Layout.alignment: Qt.AlignHCenter }
+        }
+    }
+
+    component MetricCard: Card {
+        property string title: ""
+        property string value: "--"
+        property string sub: ""
+        property real percent: 0
+
+        ColumnLayout { anchors.fill: parent; anchors.margins: 16; spacing: 9
+            Text { text: title; color: root.accent; font.pixelSize: 13; font.weight: Font.Bold; Layout.fillWidth: true; elide: Text.ElideRight }
+            Text { text: value; color: root.textMain; font.pixelSize: 27; font.weight: Font.Black; Layout.fillWidth: true; elide: Text.ElideRight }
+            Text { text: sub; color: root.textMuted; font.pixelSize: 12; Layout.fillWidth: true; elide: Text.ElideRight }
+            Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 8; radius: 4; color: "#26303b"
+                Rectangle { width: parent.width * Math.max(0, Math.min(100, percent)) / 100; height: parent.height; radius: 4; color: root.accent2; Behavior on width { NumberAnimation { duration: 180 } } }
+            }
+        }
+    }
+
+    component Card: Rectangle {
         Layout.fillWidth: true
         Layout.fillHeight: true
         radius: 22
-        color: "#dd151d28"
-        border.color: "#22ffffff"
+        color: root.cardBg
+        border.color: root.borderSoft
         border.width: 1
         antialiasing: true
+    }
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 16
-            spacing: 8
+    component NavButton: Rectangle {
+        property string label: ""
+        property bool active: false
+        signal clicked()
+        Layout.fillWidth: true
+        Layout.preferredHeight: 42
+        radius: 15
+        color: active ? "#38415a" : "transparent"
+        border.color: active ? "#558fd3ff" : "transparent"
+        border.width: 1
+        Text { anchors.centerIn: parent; text: label; color: active ? root.textMain : root.textMuted; font.pixelSize: 13; font.weight: Font.Bold }
+        MouseArea { anchors.fill: parent; hoverEnabled: true; onClicked: parent.clicked() }
+    }
 
-            Text {
-                text: title
-                color: "#86d7ff"
-                font.family: "Inter"
-                font.pixelSize: 13
-                font.weight: Font.Bold
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-            }
+    component IconButton: Rectangle {
+        property string label: ""
+        property string tip: ""
+        property bool danger: false
+        signal clicked()
+        Layout.preferredWidth: 46
+        Layout.preferredHeight: 46
+        radius: 16
+        color: danger ? "#3b1f2b" : "#222b38"
+        border.color: danger ? "#66ff8fb7" : root.borderSoft
+        Text { anchors.centerIn: parent; text: label; color: danger ? "#ffb1ca" : root.textMain; font.pixelSize: 20; font.weight: Font.Black }
+        MouseArea { anchors.fill: parent; onClicked: parent.clicked() }
+    }
 
-            Text {
-                text: main
-                color: "#ffffff"
-                font.family: "Inter"
-                font.pixelSize: 26
-                font.weight: Font.Black
-                elide: Text.ElideRight
-                maximumLineCount: 1
-                Layout.fillWidth: true
-            }
-
-            Text {
-                text: sub
-                color: "#9ba6b2"
-                font.family: "Inter"
-                font.pixelSize: 12
-                elide: Text.ElideRight
-                maximumLineCount: 2
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-            }
-        }
+    component ActionButton: Rectangle {
+        property string label: ""
+        property var command: []
+        property bool highlight: false
+        signal clicked()
+        Layout.preferredHeight: 46
+        radius: 16
+        color: highlight ? "#465174" : "#222b38"
+        border.color: highlight ? "#668fd3ff" : root.borderSoft
+        border.width: 1
+        Text { anchors.centerIn: parent; text: label; color: root.textMain; font.pixelSize: 13; font.weight: Font.Bold }
+        MouseArea { anchors.fill: parent; onClicked: { if (command.length > 0) Quickshell.execDetached(command); parent.clicked() } }
     }
 }
