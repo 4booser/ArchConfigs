@@ -1,0 +1,98 @@
+* {
+    border: unset;
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", "Noto Color Emoji", sans-serif;
+}
+
+:root {
+    --border-color: rgba(255, 255, 255, 0.10);
+    --border-color-active: rgba(137, 180, 250, 0.95);
+    --bg-color: rgba(12, 14, 20, 0.78);
+    --bg-color-hover: rgba(137, 180, 250, 0.20);
+    --index-border-color: rgba(203, 166, 247, 0.70);
+    --border-radius: 18px;
+    --border-size: 2px;
+}
+
+.window {
+    padding: 10px;
+    color: #cdd6f4;
+    border-radius: 24px;
+    background-color: rgba(12, 14, 20, 0.72);
+    border: 1px solid rgba(137, 180, 250, 0.28);
+}
+
+.monitor {
+    font-size: 18px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+.monitor:hover {
+    background-color: rgba(137, 180, 250, 0.18);
+}
+
+.monitor_active {
+    border: 2px solid rgba(137, 180, 250, 0.95);
+}
+
+.workspace {
+    font-size: 20px;
+    font-weight: 800;
+    color: #cdd6f4;
+    border-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.workspace:hover {
+    background-color: rgba(137, 180, 250, 0.18);
+}
+
+.workspace_active {
+    color: #ffffff;
+    background-color: rgba(137, 180, 250, 0.22);
+    border: 2px solid rgba(137, 180, 250, 0.95);
+}
+
+.workspace_special {
+    border: 2px solid rgba(166, 227, 161, 0.72);
+}
+
+.client {
+    font-size: 14px;
+    font-weight: 700;
+    color: #cdd6f4;
+    border-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.client:hover {
+    color: #ffffff;
+    background-color: rgba(137, 180, 250, 0.18);
+    border: 1px solid rgba(137, 180, 250, 0.45);
+}
+
+.client_active {
+    color: #ffffff;
+    background-color: rgba(137, 180, 250, 0.24);
+    border: 2px solid rgba(137, 180, 250, 0.95);
+}
+
+.client-image {
+    margin-top: 8px;
+    margin-bottom: 6px;
+    border-radius: 14px;
+}
+
+.index {
+    margin: 4px;
+    padding: 3px 7px;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    color: #ffffff;
+    border-radius: 12px;
+    background-color: rgba(203, 166, 247, 0.20);
+    border: 1px solid rgba(203, 166, 247, 0.70);
+}
