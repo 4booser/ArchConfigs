@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+uri="${NAUTILUS_SCRIPT_CURRENT_URI:-}"
+
+if [[ -z "$uri" ]]; then
+    if [[ -n "${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS:-}" ]]; then
+        target="$(printf '%s\n' "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | head -n 1)"
+        if [[ -f "$target" ]]; then
+            target="$(dirname "$target")"
+        fi
+    else
+        target="$PWD"
+    fi
+else
+    target="$(python - "$uri" <<'PY'
+import sys
+from urllib.parse import unquote, urlparse
+
+uri = sys.argv[1]
+parsed = urlparse(uri)
+
+if parsed.scheme and parsed.scheme != "file":
+    raise SystemExit(1)
+
+print(unquote(parsed.path or uri))
+PY
+)"
+fi
+
+if [[ -f "$target" ]]; then
+    target="$(dirname "$target")"
+fi
+
+if [[ ! -d "$target" ]]; then
+    target="$HOME"
+fi
+
+kitty --directory "$target" >/dev/null 2>&1 &
