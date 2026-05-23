@@ -7,11 +7,7 @@ log_file="/tmp/qs-dashboard.log"
 asset_log="/tmp/qs-dashboard-assets.log"
 lock_file="/tmp/qs-dashboard.lock"
 
-exec 9>"$lock_file"
-if ! flock -n 9; then
-    echo "$(date '+%F %T') dashboard launcher is already running; ignoring duplicate hotkey" >>"$log_file"
-    exit 0
-fi
+mkdir -p "$(dirname "$log_file")" 2>/dev/null || true
 
 log() {
     echo "$(date '+%F %T') $*" >>"$log_file"
@@ -28,23 +24,53 @@ dashboard_pids() {
 
 kill_dashboard() {
     dashboard_pids | xargs -r kill 2>/dev/null || true
+    sleep 0.1
+    dashboard_pids | xargs -r kill -9 2>/dev/null || true
 }
+
+notify_safe_mode() {
+    if have notify-send; then
+        notify-send "Dashboard disabled" "Safe mode: SUPER+M will not start Quickshell dashboard"
+    fi
+}
+
+# SAFETY DEFAULT:
+# The hotkey must not launch the experimental Quickshell overlay.
+# Manual testing only:
+#   QS_DASHBOARD_ENABLE=1 bash ~/.config/hypr/scripts/dashboard.sh
+if [[ "${QS_DASHBOARD_ENABLE:-0}" != "1" ]]; then
+    kill_dashboard
+    rm -f "$lock_file"
+    log "safe-mode: blocked dashboard launch; killed stale dashboard qs instances if any"
+    notify_safe_mode
+    exit 0
+fi
+
+exec 9>"$lock_file"
+if ! flock -n 9; then
+    log "launcher already running; ignoring duplicate request"
+    exit 0
+fi
 
 if ! have qs; then
     log "ERROR: qs command not found"
     exit 1
 fi
 
+if [[ ! -d "$qs_dir" ]]; then
+    log "ERROR: dashboard directory not found: $qs_dir"
+    exit 1
+fi
+
 if [[ -f "$asset_installer" ]]; then
-    bash "$asset_installer" >"$asset_log" 2>&1 || true
+    bash "$asset_installer" >"$asset_log" 2>&1 || log "WARNING: asset installer failed, see $asset_log"
 fi
 
 mapfile -t pids < <(dashboard_pids)
 
 if (( ${#pids[@]} > 1 )); then
-    log "WARNING: found multiple dashboard qs instances: ${pids[*]}; killing all and restarting one"
+    log "WARNING: multiple dashboard instances detected: ${pids[*]}; killing all"
     kill_dashboard
-    sleep 0.2
     pids=()
 fi
 
@@ -67,7 +93,7 @@ fi
 
 log "calling dashboard toggle on pid(s): ${pids[*]}"
 if ! timeout 2s qs -p "$qs_dir" ipc call dashboard toggle >>"$log_file" 2>&1; then
-    log "ERROR: dashboard IPC failed or timed out; killing dashboard instance to avoid frozen overlay"
+    log "ERROR: dashboard IPC failed or timed out; killing dashboard instance"
     kill_dashboard
     exit 1
 fi
