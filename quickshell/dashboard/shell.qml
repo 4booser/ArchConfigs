@@ -357,12 +357,12 @@ ShellRoot {
     }
 
     component PerformancePage: ColumnLayout {
-        spacing: 10
+        spacing: 8
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 175
-            spacing: 10
+            Layout.preferredHeight: 128
+            spacing: 8
 
             GraphCard {
                 title: "CPU — " + root.s(root.sys.cpuName, "CPU")
@@ -390,12 +390,12 @@ ShellRoot {
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 10
+            spacing: 8
 
             RowLayout {
-                Layout.preferredWidth: 390
+                Layout.preferredWidth: 320
                 Layout.fillHeight: true
-                spacing: 10
+                spacing: 8
 
                 RingCard {
                     title: "Memory"
@@ -419,17 +419,17 @@ ShellRoot {
             Card {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.minimumWidth: 300
+                Layout.minimumWidth: 260
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 14
-                    spacing: 9
+                    anchors.margins: 10
+                    spacing: 6
 
                     Text {
                         text: "Network — " + root.s(root.sys.netInterface, "--")
                         color: root.textMain
-                        font.pixelSize: 16
+                        font.pixelSize: 14
                         font.weight: Font.Black
                         elide: Text.ElideRight
                         Layout.fillWidth: true
@@ -437,8 +437,8 @@ ShellRoot {
 
                     SparkGraph {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: 90
+                        Layout.preferredHeight: 62
+                        Layout.fillHeight: false
                         points: root.netHistory
                         strokeColor: root.pink
                     }
@@ -446,8 +446,8 @@ ShellRoot {
                     GridLayout {
                         Layout.fillWidth: true
                         columns: 2
-                        rowSpacing: 6
-                        columnSpacing: 12
+                        rowSpacing: 4
+                        columnSpacing: 10
                         LabelValue { label: "Download"; value: root.n(root.sys.netDown, 0) + " KiB/s" }
                         LabelValue { label: "Upload"; value: root.n(root.sys.netUp, 0) + " KiB/s" }
                         LabelValue { label: "IP"; value: root.s(root.sys.ip, "--") }
@@ -640,22 +640,22 @@ ShellRoot {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 14
-            spacing: 7
+            anchors.margins: 10
+            spacing: 5
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 8
-                Text { Layout.fillWidth: true; text: graphCard.title; color: root.textMain; font.pixelSize: 15; font.weight: Font.Black; elide: Text.ElideRight }
-                Text { text: Math.round(graphCard.value) + "%"; color: graphCard.accentColor; font.pixelSize: 18; font.weight: Font.Black }
+                spacing: 6
+                Text { Layout.fillWidth: true; text: graphCard.title; color: root.textMain; font.pixelSize: 13; font.weight: Font.Black; elide: Text.ElideRight }
+                Text { text: Math.round(graphCard.value) + "%"; color: graphCard.accentColor; font.pixelSize: 15; font.weight: Font.Black }
             }
 
-            Text { text: Math.round(graphCard.temp) + "°C Temp"; color: root.textSoft; font.pixelSize: 11 }
+            Text { text: Math.round(graphCard.temp) + "°C Temp"; color: root.textSoft; font.pixelSize: 10 }
 
             SparkGraph {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.preferredHeight: 95
+                Layout.preferredHeight: 70
                 points: graphCard.points
                 strokeColor: graphCard.accentColor
             }
@@ -671,17 +671,17 @@ ShellRoot {
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: 13
-            spacing: 11
+            anchors.margins: 10
+            spacing: 8
 
-            RingMeter { value: ringCard.value; meterColor: ringCard.accentColor; Layout.preferredWidth: 82; Layout.preferredHeight: 82 }
+            RingMeter { value: ringCard.value; meterColor: ringCard.accentColor; Layout.preferredWidth: 64; Layout.preferredHeight: 64 }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 3
-                Text { text: ringCard.title; color: root.textMain; font.pixelSize: 14; font.weight: Font.Black; elide: Text.ElideRight; Layout.fillWidth: true }
-                Text { text: Math.round(ringCard.value) + "%"; color: ringCard.accentColor; font.pixelSize: 18; font.weight: Font.Black }
-                Text { text: ringCard.sub; color: root.textMuted; font.pixelSize: 10; elide: Text.ElideRight; Layout.fillWidth: true }
+                spacing: 2
+                Text { text: ringCard.title; color: root.textMain; font.pixelSize: 12; font.weight: Font.Black; elide: Text.ElideRight; Layout.fillWidth: true }
+                Text { text: Math.round(ringCard.value) + "%"; color: ringCard.accentColor; font.pixelSize: 15; font.weight: Font.Black }
+                Text { text: ringCard.sub; color: root.textMuted; font.pixelSize: 9; elide: Text.ElideRight; Layout.fillWidth: true }
             }
         }
     }
