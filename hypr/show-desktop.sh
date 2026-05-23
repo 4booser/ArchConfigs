@@ -3,6 +3,13 @@ set -u
 
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-show-desktop-${HYPRLAND_INSTANCE_SIGNATURE:-default}.state"
 TARGET_WORKSPACE="special:showdesktop"
+DEBUG="${DEBUG:-0}"
+
+log() {
+    if [[ "$DEBUG" == "1" ]]; then
+        echo "show-desktop: $*" >&2
+    fi
+}
 
 if ! command -v jq >/dev/null 2>&1; then
     notify-send "show-desktop" "jq is required: sudo pacman -S jq" 2>/dev/null || true
@@ -14,6 +21,8 @@ lua_move_window() {
     local workspace="$1"
     local address="$2"
     local code
+    local output
+    local status
 
     code="$(
         jq -Rn \
@@ -22,12 +31,26 @@ lua_move_window() {
             '"hl.dispatch(hl.dsp.window.move({ workspace = " + ($workspace | @json) + ", follow = false, window = " + ($window | @json) + " }))"'
     )"
 
+    log "moving $address -> $workspace"
+    log "eval: $code"
+
     # hyprland.lua configs parse `hyprctl dispatch` as Lua, so use eval with the Lua dispatcher API.
-    hyprctl eval "$code" >/dev/null 2>&1 || true
+    output="$(hyprctl eval "$code" 2>&1)"
+    status=$?
+
+    if [[ $status -ne 0 || "$output" == error:* ]]; then
+        echo "show-desktop: failed to move $address to $workspace" >&2
+        echo "show-desktop: hyprctl eval output: $output" >&2
+        return 1
+    fi
+
+    log "hyprctl eval output: ${output:-ok}"
 }
 
 # Restore windows if the state file exists.
 if [[ -s "$STATE_FILE" ]]; then
+    log "restoring windows from $STATE_FILE"
+
     while IFS=$'\t' read -r address workspace; do
         [[ -n "${address:-}" && -n "${workspace:-}" ]] || continue
         lua_move_window "$workspace" "$address"
@@ -38,11 +61,12 @@ if [[ -s "$STATE_FILE" ]]; then
 fi
 
 active_workspace_id="$(hyprctl activeworkspace -j | jq -r '.id')"
+log "active workspace id: $active_workspace_id"
 
 hyprctl clients -j | jq -r --argjson workspace_id "$active_workspace_id" '
     .[]
     | select(.workspace.id == $workspace_id)
-    | select(.mapped == true)
+    | select((.mapped // true) == true)
     | select((.pinned // false) == false)
     | [.address, (.workspace.name // (.workspace.id | tostring))]
     | @tsv
@@ -50,7 +74,13 @@ hyprctl clients -j | jq -r --argjson workspace_id "$active_workspace_id" '
 
 if [[ ! -s "$STATE_FILE" ]]; then
     rm -f "$STATE_FILE"
+    log "no windows found on active workspace"
     exit 0
+fi
+
+log "windows to hide:"
+if [[ "$DEBUG" == "1" ]]; then
+    cat "$STATE_FILE" >&2
 fi
 
 while IFS=$'\t' read -r address workspace; do
