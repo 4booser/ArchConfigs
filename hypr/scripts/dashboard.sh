@@ -7,10 +7,8 @@ log_file="/tmp/qs-dashboard.log"
 asset_log="/tmp/qs-dashboard-assets.log"
 lock_file="/tmp/qs-dashboard.lock"
 
-mkdir -p "$(dirname "$log_file")" 2>/dev/null || true
-
 log() {
-    echo "$(date '+%F %T') $*" >>"$log_file"
+    echo "$(date '+%F %T') $*" >>"$log_file" 2>/dev/null || true
 }
 
 have() {
@@ -28,21 +26,14 @@ kill_dashboard() {
     dashboard_pids | xargs -r kill -9 2>/dev/null || true
 }
 
-notify_safe_mode() {
-    if have notify-send; then
-        notify-send "Dashboard disabled" "Safe mode: SUPER+M will not start Quickshell dashboard"
-    fi
-}
-
 # SAFETY DEFAULT:
-# The hotkey must not launch the experimental Quickshell overlay.
+# SUPER+M must be silent and must not start the experimental Quickshell dashboard.
 # Manual testing only:
 #   QS_DASHBOARD_ENABLE=1 bash ~/.config/hypr/scripts/dashboard.sh
 if [[ "${QS_DASHBOARD_ENABLE:-0}" != "1" ]]; then
     kill_dashboard
     rm -f "$lock_file"
     log "safe-mode: blocked dashboard launch; killed stale dashboard qs instances if any"
-    notify_safe_mode
     exit 0
 fi
 
