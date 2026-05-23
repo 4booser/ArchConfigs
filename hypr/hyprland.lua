@@ -149,7 +149,7 @@ end
 
 -- Горячие клавиши
 hl.bind("SUPER + Q", hl.dsp.exec_cmd(terminal))
-hl.bind("SUPER + T", hl.dsp.exec_cmd("qs ipc -c overview call overview toggle"))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("qs ipc -c overview call overview toggle"))
 hl.bind("SUPER + R", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + E", hl.dsp.exec_cmd(filemanager))
 hl.bind("SUPER + X", hl.dsp.window.move({ workspace = "special:minimized", follow = false }))
