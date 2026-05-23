@@ -4,7 +4,6 @@ set -u
 qs_dir="$HOME/.config/quickshell/dashboard"
 log_file="/tmp/qs-dashboard.log"
 lock_file="/tmp/qs-dashboard.lock"
-disable_file="${XDG_CACHE_HOME:-$HOME/.cache}/qs-dashboard/disabled"
 
 log() {
     echo "$(date '+%F %T') $*" >>"$log_file" 2>/dev/null || true
@@ -29,13 +28,6 @@ if [[ "${1:-}" == "--kill" ]]; then
     kill_dashboard
     rm -f "$lock_file"
     log "killed dashboard by explicit --kill"
-    exit 0
-fi
-
-if [[ -f "$disable_file" ]]; then
-    kill_dashboard
-    rm -f "$lock_file"
-    log "dashboard launch blocked by $disable_file"
     exit 0
 fi
 
