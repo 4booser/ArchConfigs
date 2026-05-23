@@ -15,7 +15,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("pgrep -x hypridle >/dev/null || hypridle >/dev/null 2>&1 &")
     hl.exec_cmd([[pgrep -x awww-daemon >/dev/null || awww-daemon >/dev/null 2>&1 &]])
     hl.exec_cmd("awww img " .. wallpaper .. " --transition-type fade --transition-duration 1")
-    hl.exec_cmd("sh -c 'command -v hyprswitch >/dev/null && pgrep -x hyprswitch >/dev/null || hyprswitch init --show-title --size-factor 5.8 --workspaces-per-row 5 --custom-css " .. hypr .. "/hyprswitch.css >/dev/null 2>&1 &'")
 end)
 
 hl.config({
