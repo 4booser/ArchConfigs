@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-script="$HOME/.config/hypr/scripts/dashboard_v3.py"
+script="$HOME/.config/hypr/scripts/dashboard_v4.py"
 
 if pgrep -f "$script" >/dev/null 2>&1; then
     pkill -f "$script"
