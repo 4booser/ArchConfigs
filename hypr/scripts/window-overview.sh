@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DIR="${BASH_SOURCE[0]}"
-DIR="$(dirname "$DIR")"
-"$DIR/control-center-rofi.sh"
+notify-send "Window Overview" "Нормальный overview будет сделан отдельно. Rofi fallback отключён." 2>/dev/null || true
+exit 0
