@@ -2,10 +2,9 @@
 set -u
 
 qs_dir="$HOME/.config/quickshell/dashboard"
-asset_installer="$HOME/.config/scripts/install-dashboard-assets.sh"
 log_file="/tmp/qs-dashboard.log"
-asset_log="/tmp/qs-dashboard-assets.log"
 lock_file="/tmp/qs-dashboard.lock"
+disable_file="${XDG_CACHE_HOME:-$HOME/.cache}/qs-dashboard/disabled"
 
 log() {
     echo "$(date '+%F %T') $*" >>"$log_file" 2>/dev/null || true
@@ -22,18 +21,21 @@ dashboard_pids() {
 
 kill_dashboard() {
     dashboard_pids | xargs -r kill 2>/dev/null || true
-    sleep 0.1
+    sleep 0.15
     dashboard_pids | xargs -r kill -9 2>/dev/null || true
 }
 
-# SAFETY DEFAULT:
-# SUPER+M must be silent and must not start the experimental Quickshell dashboard.
-# Manual testing only:
-#   QS_DASHBOARD_ENABLE=1 bash ~/.config/hypr/scripts/dashboard.sh
-if [[ "${QS_DASHBOARD_ENABLE:-0}" != "1" ]]; then
+if [[ "${1:-}" == "--kill" ]]; then
     kill_dashboard
     rm -f "$lock_file"
-    log "safe-mode: blocked dashboard launch; killed stale dashboard qs instances if any"
+    log "killed dashboard by explicit --kill"
+    exit 0
+fi
+
+if [[ -f "$disable_file" ]]; then
+    kill_dashboard
+    rm -f "$lock_file"
+    log "dashboard launch blocked by $disable_file"
     exit 0
 fi
 
@@ -51,10 +53,6 @@ fi
 if [[ ! -d "$qs_dir" ]]; then
     log "ERROR: dashboard directory not found: $qs_dir"
     exit 1
-fi
-
-if [[ -f "$asset_installer" ]]; then
-    bash "$asset_installer" >"$asset_log" 2>&1 || log "WARNING: asset installer failed, see $asset_log"
 fi
 
 mapfile -t pids < <(dashboard_pids)
