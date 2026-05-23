@@ -239,3 +239,10 @@ hl.layer_rule({
     blur = true,
     ignore_alpha = 0.4,
 })
+
+hl.layer_rule({
+    name = "dashboard-blur",
+    match = { namespace = "quickshell" },
+    blur = true,
+    ignore_alpha = 0.2,
+})
