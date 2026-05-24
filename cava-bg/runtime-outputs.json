@@ -5,6 +5,17 @@
     "width": 1920,
     "height": 1080,
     "position": [
+      2560,
+      0
+    ],
+    "configured": true
+  },
+  {
+    "name": "DP-3",
+    "index": 1,
+    "width": 2560,
+    "height": 1440,
+    "position": [
       0,
       0
     ],

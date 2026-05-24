@@ -9275,3 +9275,16 @@ Error trying to flush the wayland display: Broken pipe (os error 32)
 [DAEMON] Process started, PID: 2227
 Another instance of cava-bg is already running (PID 944).
 Use 'cava-bg off' to stop it.
+[DAEMON] Process started, PID: 1874
+Another instance of cava-bg is already running (PID 944).
+Use 'cava-bg off' to stop it.
+[DAEMON] Process started, PID: 5897
+Another instance of cava-bg is already running (PID 944).
+Use 'cava-bg off' to stop it.
+[DAEMON] Process started, PID: 1697
+Writing PID to file: /home/abooser/.config/cava-bg/daemon.pid
+PID file written successfully
+Signal handlers installed for SIGINT/SIGTERM
+[DAEMON] Entering main loop...
+[DAEMON] Initializing Wayland connection...
+[DAEMON] Starting renderer...
