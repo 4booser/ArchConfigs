@@ -149,7 +149,7 @@ end
 
 -- Горячие клавиши
 hl.bind("SUPER + Q", hl.dsp.exec_cmd(terminal))
-hl.bind("ALT + Tab", hl.dsp.exec_cmd("hyprswitch gui"))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("hyprswitch gui --mod-key alt --key tab"))
 hl.bind("SUPER + M", hl.dsp.exec_cmd(hypr .. "/scripts/dashboard.sh"))
 hl.bind("SUPER + R", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + E", hl.dsp.exec_cmd(filemanager))
