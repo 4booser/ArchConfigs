@@ -15,7 +15,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("pgrep -x hypridle >/dev/null || hypridle >/dev/null 2>&1 &")
     hl.exec_cmd([[pgrep -x awww-daemon >/dev/null || awww-daemon >/dev/null 2>&1 &]])
     hl.exec_cmd("awww img " .. wallpaper .. " --transition-type fade --transition-duration 1")
-    hl.exec_cmd(hypr .. "/scripts/start-hyprswitch.sh")
+    hl.exec_cmd("pgrep -f 'qs.*-c overview' >/dev/null || qs -c overview >/dev/null 2>&1 &")
 end)
 
 hl.config({
@@ -149,7 +149,7 @@ end
 
 -- Горячие клавиши
 hl.bind("SUPER + Q", hl.dsp.exec_cmd(terminal))
-hl.bind("ALT + Tab", hl.dsp.exec_cmd("hyprswitch gui --mod-key alt --key tab"))
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("qs ipc -c overview call overview toggle"))
 hl.bind("SUPER + M", hl.dsp.exec_cmd(hypr .. "/scripts/dashboard.sh"))
 hl.bind("SUPER + R", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + E", hl.dsp.exec_cmd(filemanager))
