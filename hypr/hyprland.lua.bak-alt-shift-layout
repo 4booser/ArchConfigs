@@ -225,8 +225,6 @@ hl.window_rule({
     no_shadow = true,
 })
 
-
-
 hl.monitor({
  output = "DP-3",
  mode = "2560x1440@144",
@@ -237,7 +235,7 @@ hl.monitor({
 hl.monitor({
  output = "HDMI-A-1",
  mode = "1920x1080@74.97",
- position = "2560x-6",
+ position = "2560x0",
  scale = 1,
 })
 
@@ -256,64 +254,5 @@ hl.layer_rule({
     ignore_alpha = 0.2,
 })
 
--- BEGIN keyboard layout switch
--- Switch keyboard layout by ALT + SHIFT
-hl.config({
- input = {
-  kb_layout = "us,ru",
-  kb_options = "grp:alt_shift_toggle",
- }
-})
--- END keyboard layout switch
 
--- BEGIN dual monitor workspace binds
--- Main monitor DP-3:
--- SUPER + 1..5 -> focus workspaces 1..5
--- SUPER + SHIFT + 1..5 -> move active window to workspaces 1..5
---
--- Second monitor HDMI-A-1:
--- ALT + 1..5 -> focus workspaces 6..10
--- SUPER + ALT + 1..5 -> move active window to workspaces 6..10
-
--- Workspace placement
-hl.workspace_rule({ workspace = "1", monitor = "DP-3", persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "DP-3", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "DP-3", persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "DP-3", persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "DP-3", persistent = true })
-
-hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-1", persistent = true })
-
--- Main monitor navigation
-hl.bind("SUPER + 1", hl.dsp.focus({ workspace = 1 }))
-hl.bind("SUPER + 2", hl.dsp.focus({ workspace = 2 }))
-hl.bind("SUPER + 3", hl.dsp.focus({ workspace = 3 }))
-hl.bind("SUPER + 4", hl.dsp.focus({ workspace = 4 }))
-hl.bind("SUPER + 5", hl.dsp.focus({ workspace = 5 }))
-
--- Main monitor move window
-hl.bind("SUPER + SHIFT + 1", hl.dsp.window.move({ workspace = 1, follow = true }))
-hl.bind("SUPER + SHIFT + 2", hl.dsp.window.move({ workspace = 2, follow = true }))
-hl.bind("SUPER + SHIFT + 3", hl.dsp.window.move({ workspace = 3, follow = true }))
-hl.bind("SUPER + SHIFT + 4", hl.dsp.window.move({ workspace = 4, follow = true }))
-hl.bind("SUPER + SHIFT + 5", hl.dsp.window.move({ workspace = 5, follow = true }))
-
--- Second monitor navigation
-hl.bind("ALT + 1", hl.dsp.focus({ workspace = 6 }))
-hl.bind("ALT + 2", hl.dsp.focus({ workspace = 7 }))
-hl.bind("ALT + 3", hl.dsp.focus({ workspace = 8 }))
-hl.bind("ALT + 4", hl.dsp.focus({ workspace = 9 }))
-hl.bind("ALT + 5", hl.dsp.focus({ workspace = 10 }))
-
--- Second monitor move window
-hl.bind("SUPER + ALT + 1", hl.dsp.window.move({ workspace = 6, follow = true }))
-hl.bind("SUPER + ALT + 2", hl.dsp.window.move({ workspace = 7, follow = true }))
-hl.bind("SUPER + ALT + 3", hl.dsp.window.move({ workspace = 8, follow = true }))
-hl.bind("SUPER + ALT + 4", hl.dsp.window.move({ workspace = 9, follow = true }))
-hl.bind("SUPER + ALT + 5", hl.dsp.window.move({ workspace = 10, follow = true }))
--- END dual monitor workspace binds
 
