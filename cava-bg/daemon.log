@@ -9363,3 +9363,110 @@ Error trying to flush the wayland display: Broken pipe (os error 32)
 [DAEMON] Keep-alive retry in 2s (attempt 1)
 [DAEMON] Initializing Wayland connection...
 [DAEMON] Starting renderer...
+[2026-05-27T18:33:36Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:37Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:38Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:39Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:40Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:41Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:42Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:43Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:44Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:46Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:47Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:48Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:49Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:50Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:51Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:52Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:53Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:54Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:55Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:56Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:57Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:58Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:33:59Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:34:00Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:34:01Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:34:02Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:34:03Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:34:04Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:02Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:03Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:04Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:05Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:06Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:07Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:08Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:09Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:10Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:11Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:12Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:14Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:15Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:16Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:17Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:18Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:19Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:20Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:21Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:22Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:23Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:24Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:25Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:26Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:27Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:28Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:29Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:30Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:31Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:32Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:33Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:34Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:35Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:36Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:37Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:38Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:39Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:40Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:41Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:42Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:43Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:44Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:45Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:46Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:47Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:48Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:49Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:50Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:51Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:52Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[2026-05-27T18:41:53Z ERROR cava_bg::wayland_renderer] Surface error: Timeout
+[DAEMON] Process started, PID: 7617
+Writing PID to file: /home/abooser/.config/cava-bg/daemon.pid
+PID file written successfully
+Signal handlers installed for SIGINT/SIGTERM
+[DAEMON] Entering main loop...
+[DAEMON] Initializing Wayland connection...
+[DAEMON] Starting renderer...
+Io error: Broken pipe (os error 32)
+Error trying to flush the wayland display: Broken pipe (os error 32)
+[2026-05-28T11:08:26Z ERROR cava_bg] Daemon renderer error: underlying IO error: Broken pipe (os error 32): Broken pipe (os error 32)
+[DAEMON ERROR] Failed to start: underlying IO error: Broken pipe (os error 32): Broken pipe (os error 32)
+[DAEMON] Keep-alive retry in 2s (attempt 1)
+[DAEMON] Initializing Wayland connection...
+[DAEMON] Starting renderer...
+Io error: Broken pipe (os error 32)
+Error trying to flush the wayland display: Broken pipe (os error 32)
+[2026-05-28T14:00:58Z ERROR cava_bg] Daemon renderer error: underlying IO error: Broken pipe (os error 32): Broken pipe (os error 32)
+[DAEMON ERROR] Failed to start: underlying IO error: Broken pipe (os error 32): Broken pipe (os error 32)
+[DAEMON] Keep-alive retry in 2s (attempt 2)
+[DAEMON] Initializing Wayland connection...
+[DAEMON] Starting renderer...
+[DAEMON] Process started, PID: 4735
+Writing PID to file: /home/abooser/.config/cava-bg/daemon.pid
+PID file written successfully
+Signal handlers installed for SIGINT/SIGTERM
+[DAEMON] Entering main loop...
+[DAEMON] Initializing Wayland connection...
+[DAEMON] Starting renderer...
