@@ -2,9 +2,10 @@
 local home = os.getenv("HOME")
 local hypr = home .. "/.config/hypr"
 local terminal = "kitty"
-local launcher = "rofi -show drun -show-icons"
+local launcher = "walker"
 local filemanager = "nautilus"
 local wallpaper = home .. "/Pictures/Wallpapers/wallpaper.jpg"
+local wallpaper_picker = home .. "/.config/scripts/wallpaper.sh"
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("sh -c 'pgrep -x waybar >/dev/null || waybar'")
@@ -13,8 +14,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
     hl.exec_cmd(home .. "/.local/bin/start-visualizer.sh")
     hl.exec_cmd("pgrep -x hypridle >/dev/null || hypridle >/dev/null 2>&1 &")
-    hl.exec_cmd([[pgrep -x awww-daemon >/dev/null || awww-daemon >/dev/null 2>&1 &]])
-    hl.exec_cmd("awww img " .. wallpaper .. " --transition-type fade --transition-duration 1")
+    hl.exec_cmd("pgrep -x hyprpaper >/dev/null || hyprpaper >/dev/null 2>&1 &")
     hl.exec_cmd("pgrep -f 'qs.*-c overview' >/dev/null || qs -c overview >/dev/null 2>&1 &")
 end)
 
@@ -24,6 +24,14 @@ hl.config({
         gaps_out = 12,
         border_size = 2,
         layout = "dwindle",
+        resize_on_border = true,
+        extend_border_grab_area = 12,
+        snap = {
+            enabled = true,
+            window_gap = 10,
+            monitor_gap = 12,
+            border_overlap = true,
+        },
     },
 
     decoration = {
@@ -61,37 +69,48 @@ hl.config({
     animations = {
         enabled = true,
     },
+
+    -- These are Hyprland misc keys, not animations.*
+    misc = {
+        animate_mouse_windowdragging = true,
+        animate_manual_resizes = true,
+    },
+
+    -- Keep only stable dwindle options supported by the Lua config API.
+    dwindle = {
+        preserve_split = true,
+    },
 })
 
--- Кривые анимаций
-hl.curve("smoothOut", {
+-- Кривые анимаций: быстрые macOS-like переходы без тяжёлого overshoot
+hl.curve("macosEase", {
     type = "bezier",
-    points = { { 0.36, 0 }, { 0.66, -0.56 } },
+    points = { { 0.22, 1.0 }, { 0.36, 1.0 } },
 })
 
-hl.curve("smoothIn", {
+hl.curve("macosOut", {
     type = "bezier",
-    points = { { 0.25, 1 }, { 0.5, 1 } },
+    points = { { 0.16, 1.0 }, { 0.3, 1.0 } },
 })
 
-hl.curve("overshot", {
+hl.curve("macosIn", {
     type = "bezier",
-    points = { { 0.05, 0.9 }, { 0.1, 1.05 } },
+    points = { { 0.45, 0.0 }, { 0.55, 1.0 } },
 })
 
 -- Анимации
 hl.animation({
     leaf = "windows",
     enabled = true,
-    speed = 5,
-    bezier = "overshot",
+    speed = 6,
+    bezier = "macosEase",
 })
 
 hl.animation({
     leaf = "windowsOut",
     enabled = true,
     speed = 5,
-    bezier = "smoothOut",
+    bezier = "macosOut",
     style = "popin 80%",
 })
 
@@ -99,21 +118,21 @@ hl.animation({
     leaf = "border",
     enabled = true,
     speed = 10,
-    bezier = "default",
+    bezier = "macosIn",
 })
 
 hl.animation({
     leaf = "fade",
     enabled = true,
     speed = 5,
-    bezier = "default",
+    bezier = "macosIn",
 })
 
 hl.animation({
     leaf = "workspaces",
     enabled = true,
     speed = 5,
-    bezier = "overshot",
+    bezier = "macosEase",
     style = "slide",
 })
 
@@ -121,7 +140,7 @@ hl.animation({
     leaf = "workspacesIn",
     enabled = true,
     speed = 5,
-    bezier = "overshot",
+    bezier = "macosEase",
     style = "slide",
 })
 
@@ -129,7 +148,7 @@ hl.animation({
     leaf = "workspacesOut",
     enabled = true,
     speed = 5,
-    bezier = "smoothOut",
+    bezier = "macosOut",
     style = "slide",
 })
 
@@ -151,17 +170,19 @@ end
 hl.bind("SUPER + Q", hl.dsp.exec_cmd(terminal))
 hl.bind("ALT + Tab", hl.dsp.exec_cmd("qs ipc -c overview call overview toggle"))
 hl.bind("SUPER + M", hl.dsp.exec_cmd(hypr .. "/scripts/dashboard.sh"))
-hl.bind("SUPER + R", hl.dsp.exec_cmd(launcher))
+hl.bind("SUPER + D", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + E", hl.dsp.exec_cmd(filemanager))
 hl.bind("SUPER + X", hl.dsp.window.move({ workspace = "special:minimized", follow = false }))
 hl.bind("SUPER + SHIFT + X", hl.dsp.workspace.toggle_special("minimized"))
-hl.bind("SUPER + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
+hl.bind("SUPER + V", hl.dsp.exec_cmd("cliphist list | walker --dmenu | cliphist decode | wl-copy"))
 
-hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
 
-hl.bind("SUPER + D", function()
+hl.bind("SUPER + B", function()
     hl.exec_cmd(hypr .. "/show-desktop.sh")
 end)
+
+hl.bind("SUPER + W", hl.dsp.exec_cmd(wallpaper_picker))
 
 hl.bind("Print", function()
     hl.exec_cmd(hypr .. "/scripts/screenshot-area.sh")
@@ -173,32 +194,31 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd("grim - | wl-copy"))
 hl.bind("SUPER + C", hl.dsp.window.close())
 hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 hl.bind("SUPER + Space", hl.dsp.window.float({ action = "toggle" }))
+hl.bind("SUPER + P", hl.dsp.window.pseudo())
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next({ next = true }))
 
--- Фокус окон стрелками
-hl.bind("SUPER + Left", hl.dsp.focus({ direction = "left" }))
-hl.bind("SUPER + Right", hl.dsp.focus({ direction = "right" }))
-hl.bind("SUPER + Up", hl.dsp.focus({ direction = "up" }))
-hl.bind("SUPER + Down", hl.dsp.focus({ direction = "down" }))
+-- Фокус и перемещение окон: vim-style HJKL + стрелки
+local directions = {
+    H = "left",
+    J = "down",
+    K = "up",
+    L = "right",
+    Left = "left",
+    Down = "down",
+    Up = "up",
+    Right = "right",
+}
 
--- Перемещение окон стрелками
-hl.bind("SUPER + SHIFT + Left", hl.dsp.window.move({ direction = "left" }))
-hl.bind("SUPER + SHIFT + Right", hl.dsp.window.move({ direction = "right" }))
-hl.bind("SUPER + SHIFT + Up", hl.dsp.window.move({ direction = "up" }))
-hl.bind("SUPER + SHIFT + Down", hl.dsp.window.move({ direction = "down" }))
-
--- Рабочие столы
-for i = 1, 5 do
-    local workspace = tostring(i)
-
-    hl.bind("SUPER + " .. workspace, function()
-        focus_workspace(workspace)
-    end)
-
-    hl.bind("SUPER + SHIFT + " .. workspace, function()
-        move_window_to_workspace(workspace)
-    end)
+for key, direction in pairs(directions) do
+    hl.bind("SUPER + " .. key, hl.dsp.focus({ direction = direction }))
+    hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ direction = direction }))
 end
+
+-- Мышь: macOS-like drag/resize с SUPER (Lua API requires mouse flag)
+hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true })
+hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Рабочие столы задаются ниже для двух мониторов без дублирующих binds
 
 -- Диспетчер задач
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("kitty --class btop-g -e btop"))
@@ -242,8 +262,8 @@ hl.monitor({
 })
 
 hl.layer_rule({
-    name = "rofi-popin",
-    match = { namespace = "rofi" },
+    name = "walker-popin",
+    match = { namespace = "walker" },
     animation = "popin 80%",
     blur = true,
     ignore_alpha = 0.4,
@@ -255,16 +275,6 @@ hl.layer_rule({
     blur = true,
     ignore_alpha = 0.2,
 })
-
--- BEGIN keyboard layout switch
--- Switch keyboard layout by ALT + SHIFT
-hl.config({
- input = {
-  kb_layout = "us,ru",
-  kb_options = "grp:alt_shift_toggle",
- }
-})
--- END keyboard layout switch
 
 -- BEGIN dual monitor workspace binds
 -- Main monitor DP-3:

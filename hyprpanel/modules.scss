@@ -1,0 +1,50 @@
+// Minimal glassmorphism for Hyprpanel modules.
+$panel-bg: rgba(20, 22, 28, 0.46);
+$module-bg: rgba(255, 255, 255, 0.08);
+$module-bg-hover: rgba(255, 255, 255, 0.13);
+$module-border: rgba(255, 255, 255, 0.16);
+$module-shadow: rgba(0, 0, 0, 0.18);
+$text: rgba(245, 247, 250, 0.94);
+$text-muted: rgba(245, 247, 250, 0.68);
+
+.bar,
+.panel,
+.hyprpanel {
+  background: $panel-bg;
+  border: 1px solid $module-border;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px $module-shadow;
+  color: $text;
+}
+
+.module,
+.module-box,
+.widget,
+.workspace,
+.workspaces button {
+  background: $module-bg;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  color: $text;
+  margin: 4px 3px;
+  padding: 4px 10px;
+  transition: 160ms ease-out;
+}
+
+.module:hover,
+.widget:hover,
+.workspaces button:hover {
+  background: $module-bg-hover;
+  border-color: $module-border;
+}
+
+.module label,
+.widget label {
+  color: $text;
+  font-weight: 500;
+}
+
+.module .muted,
+.widget .muted {
+  color: $text-muted;
+}
